@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Privacy · Paragliding Wind</title>
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&family=Barlow+Semi+Condensed:wght@400;600&display=swap">
+<style>
+/* Aceleași culori și fonturi ca aplicația; o coloană de text lizibilă. */
+:root{--bg:#f2f5f7;--surface:#fff;--ink:#13212b;--muted:#5a6a76;--line:#d5dde3;--accent:#c4500b;
+  --f-display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;--f-ui:"Barlow Semi Condensed","Roboto Condensed",system-ui,sans-serif;color-scheme:light}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0d151b;--surface:#152029;--ink:#e4ebf0;--muted:#93a3ae;--line:#26343e;--accent:#ff8a3d;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0d151b;--surface:#152029;--ink:#e4ebf0;--muted:#93a3ae;--line:#26343e;--accent:#ff8a3d;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.55 var(--f-ui);padding:env(safe-area-inset-top,0px) 16px env(safe-area-inset-bottom,0px)}
+main{max-width:68ch;margin:0 auto;padding-block:28px 48px}
+h1{font:700 34px/1.05 var(--f-display);text-transform:uppercase;letter-spacing:.02em;margin:0 0 6px;text-wrap:balance}
+h2{font:700 21px/1.2 var(--f-display);text-transform:uppercase;letter-spacing:.04em;margin:30px 0 8px}
+p,li{margin:0 0 10px}
+ul{padding-left:20px;margin:0 0 10px}
+a{color:var(--accent);font-weight:600}
+.meta{color:var(--muted);margin-bottom:22px}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:18px 0}
+.en{margin-top:40px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted)}
+.en h2{color:var(--ink)}
+</style>
+</head>
+<body>
+<main>
+  <p><a href="./?lang=en">← Back to Paragliding Wind</a> · <a href="confidentialitate.html">Română</a></p>
+  <h1>Privacy policy</h1>
+  <p class="meta">Paragliding Wind (Vânt la Decolare) · updated 12 October 2026</p>
+
+  <div class="box"><b>In short:</b> the app has no server of its own and collects no data about you. Your site list and flight log stay on your device and, if you sign in with Google, in a single file in your own Google Drive. The author of the app has no access to them.</div>
+
+  <h2>What data the app uses</h2>
+  <ul>
+    <li><b>Your site list, thresholds and flight log</b> (date, site and airtime). Stored in your browser, on your device.</li>
+    <li><b>If you sign in with Google</b> (optional), Google gives the app your account name and email address, only to show who is signed in, and permission to work only with the files the app itself creates in your Google Drive (the <code>drive.file</code> permission). It cannot see or read any other files in your Drive.</li>
+    <li><b>The synced log</b> is kept in the Excel file “Vânt la Decolare - jurnal de zbor.xlsx” in your Google Drive, in the same format as the export (flying days, by site, sites), plus a hidden sheet the app uses for syncing. You can open, download or delete it at any time from Drive. If you used an older version, “Vânt la Decolare - jurnal de zbor.json” may also exist: the app reads it once, after which you can delete it.</li>
+    <li><b>GPS location</b> is used only when you ask for it: with “Takeoffs near me”, to show the takeoffs around you (computed on your device), and with “I'm at the takeoff”, to place the pin on the map. It is not stored and is sent only to the services below, to look up altitude and place name (only for “I'm at the takeoff”).</li>
+  </ul>
+
+  <h2>What the app doesn't do</h2>
+  <ul>
+    <li>It has no server and keeps no data on the author's computers.</li>
+    <li>No ads, tracking cookies or visitor analytics.</li>
+    <li>It doesn't sell or share data with anyone.</li>
+  </ul>
+
+  <h2>External services</h2>
+  <p>To work, the app requests public information from these services. Like any website, they receive your device's IP address and the coordinates being looked up:</p>
+  <ul>
+    <li><b>Open-Meteo</b>: weather forecast and terrain altitude.</li>
+    <li><b>Holfuy</b>: real-time wind measured at stations (widget).</li>
+    <li><b>OpenStreetMap / Nominatim, OpenTopoMap, Esri</b>: the map and place names.</li>
+    <li><b>Google</b>: sign-in and Google Drive, only if you sign in.</li>
+    <li><b>GitHub Pages</b>: hosting. <b>Google Fonts</b> and <b>cdnjs</b>: fonts and the map library.</li>
+  </ul>
+  <p>The list of takeoffs comes from ParaglidingEarth and is bundled with the app; nothing is sent to ParaglidingEarth.</p>
+
+  <h2>Your control over the data</h2>
+  <ul>
+    <li><b>Sign out</b> in the log: the log is removed from that device and remains only in your Drive.</li>
+    <li><b>Delete everything:</b> delete the file from Google Drive and clear the site data in your browser settings.</li>
+    <li><b>Revoke access:</b> in your Google account, at <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">myaccount.google.com/permissions</a>.</li>
+    <li><b>Export:</b> the log can be exported to Excel at any time.</li>
+  </ul>
+
+  <h2>Contact</h2>
+  <p>Questions or issues: <a href="https://github.com/paraglidingwind/paraglidingwind.github.io/issues" target="_blank" rel="noopener">github.com/paraglidingwind/paraglidingwind.github.io/issues</a>.</p>
+  <p class="meta" style="margin-top:28px"><a href="terms.html">Terms of service</a></p>
+</main>
+</body>
+</html>

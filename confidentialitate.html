@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Confidențialitate · Vânt la Decolare</title>
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&family=Barlow+Semi+Condensed:wght@400;600&display=swap">
+<style>
+/* Aceleași culori și fonturi ca aplicația; o coloană de text lizibilă. */
+:root{--bg:#f2f5f7;--surface:#fff;--ink:#13212b;--muted:#5a6a76;--line:#d5dde3;--accent:#c4500b;
+  --f-display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;--f-ui:"Barlow Semi Condensed","Roboto Condensed",system-ui,sans-serif;color-scheme:light}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0d151b;--surface:#152029;--ink:#e4ebf0;--muted:#93a3ae;--line:#26343e;--accent:#ff8a3d;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0d151b;--surface:#152029;--ink:#e4ebf0;--muted:#93a3ae;--line:#26343e;--accent:#ff8a3d;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.55 var(--f-ui);padding:env(safe-area-inset-top,0px) 16px env(safe-area-inset-bottom,0px)}
+main{max-width:68ch;margin:0 auto;padding-block:28px 48px}
+h1{font:700 34px/1.05 var(--f-display);text-transform:uppercase;letter-spacing:.02em;margin:0 0 6px;text-wrap:balance}
+h2{font:700 21px/1.2 var(--f-display);text-transform:uppercase;letter-spacing:.04em;margin:30px 0 8px}
+p,li{margin:0 0 10px}
+ul{padding-left:20px;margin:0 0 10px}
+a{color:var(--accent);font-weight:600}
+.meta{color:var(--muted);margin-bottom:22px}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:18px 0}
+.en{margin-top:40px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted)}
+.en h2{color:var(--ink)}
+</style>
+</head>
+<body>
+<main>
+  <p><a href="./?lang=ro">← Înapoi la Vânt la Decolare</a> · <a href="privacy.html">English</a></p>
+  <h1>Politica de confidențialitate</h1>
+  <p class="meta">Vânt la Decolare · actualizată la 12 octombrie 2026</p>
+
+  <div class="box"><b>Pe scurt:</b> aplicația nu are server propriu și nu colectează date despre tine. Lista de decolări și jurnalul de zbor stau pe dispozitivul tău și, dacă te conectezi cu Google, într-un fișier din propriul tău Google Drive. Autorul aplicației nu are acces la ele.</div>
+
+  <h2>Ce date folosește aplicația</h2>
+  <ul>
+    <li><b>Lista ta de decolări, pragurile și jurnalul de zbor</b> (data, locația și timpul în aer). Se salvează în browserul tău, pe dispozitivul tău.</li>
+    <li><b>Dacă te conectezi cu Google</b> (opțional), aplicația primește de la Google numele și adresa de email ale contului, ca să ți le afișeze, și permisiunea de a lucra doar cu fișierele create de ea în Google Drive-ul tău (permisiunea <code>drive.file</code>). Nu vede și nu poate citi alte fișiere din Drive.</li>
+    <li><b>Jurnalul sincronizat</b> se păstrează în fișierul Excel „Vânt la Decolare - jurnal de zbor.xlsx” din Google Drive-ul tău, în același format ca exportul (zile de zbor, pe locații, situri), plus o foaie ascunsă pe care aplicația o folosește la sincronizare. Îl poți deschide, descărca sau șterge oricând din Drive. Dacă ai folosit o versiune mai veche, poate exista și „Vânt la Decolare - jurnal de zbor.json”: aplicația îl citește o dată, apoi îl poți șterge.</li>
+    <li><b>Locația GPS</b> e folosită doar când o ceri: la „Decolări lângă mine”, ca să arătăm decolările din jurul tău (calculul se face pe dispozitiv), și la „Sunt la decolare”, ca să pună pinul pe hartă. Nu se salvează și nu se trimite nicăieri altundeva decât serviciilor de mai jos, pentru altitudine și nume (doar la „Sunt la decolare”).</li>
+  </ul>
+
+  <h2>Ce nu face aplicația</h2>
+  <ul>
+    <li>Nu are server și nu păstrează date pe calculatoarele autorului.</li>
+    <li>Nu folosește reclame, cookie-uri de urmărire sau statistici de vizitare.</li>
+    <li>Nu vinde și nu transmite date nimănui.</li>
+  </ul>
+
+  <h2>Servicii externe folosite</h2>
+  <p>Pentru a funcționa, aplicația cere informații publice de la aceste servicii. Ele primesc, ca orice site, adresa IP a dispozitivului tău și coordonatele pentru care se cere informația:</p>
+  <ul>
+    <li><b>Open-Meteo</b>: prognoza meteo și altitudinea terenului.</li>
+    <li><b>Holfuy</b>: vântul măsurat în timp real la stații (widget).</li>
+    <li><b>OpenStreetMap / Nominatim, OpenTopoMap, Esri</b>: harta și numele locurilor.</li>
+    <li><b>Google</b>: autentificarea și Google Drive, doar dacă te conectezi.</li>
+    <li><b>GitHub Pages</b>: găzduirea paginii. <b>Google Fonts</b> și <b>cdnjs</b>: fonturile și biblioteca de hartă.</li>
+  </ul>
+  <p>Lista decolărilor provine de la ParaglidingEarth și e inclusă în aplicație; nu se trimite nimic către ParaglidingEarth.</p>
+
+  <h2>Controlul asupra datelor</h2>
+  <ul>
+    <li><b>Deconectează-te</b> din jurnal: jurnalul se șterge de pe acel dispozitiv și rămâne doar în Drive-ul tău.</li>
+    <li><b>Ștergere completă:</b> șterge fișierul din Google Drive și datele site-ului din setările browserului.</li>
+    <li><b>Revocarea accesului:</b> din contul Google, la <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">myaccount.google.com/permissions</a>.</li>
+    <li><b>Export:</b> jurnalul se poate exporta oricând în Excel.</li>
+  </ul>
+
+  <h2>Contact</h2>
+  <p>Întrebări sau probleme: <a href="https://github.com/paraglidingwind/paraglidingwind.github.io/issues" target="_blank" rel="noopener">github.com/paraglidingwind/paraglidingwind.github.io/issues</a>.</p>
+
+  <section class="en" lang="en">
+    <h2>Privacy policy (English summary)</h2>
+    <p>Vânt la Decolare has no backend and collects no personal data. Your site list and flight log are stored in your browser. If you choose to sign in with Google, the app uses the <code>drive.file</code> scope only to create and update its own Excel file, “Vânt la Decolare - jurnal de zbor.xlsx” (same format as the export), in your own Google Drive; it cannot access any other files, and the author has no access to your data. Your Google account name and email are used only to show who is signed in. Location is used only when you tap “Sunt la decolare” to place a map pin. The app uses public services (Open-Meteo, Holfuy, OpenStreetMap/Nominatim, OpenTopoMap, Esri, Google Fonts, cdnjs, GitHub Pages) that receive your IP address and the requested coordinates. No ads, tracking or analytics. You can revoke access at myaccount.google.com/permissions and delete the Drive file at any time. Contact: github.com/paraglidingwind/paraglidingwind.github.io/issues.</p>
+  </section>
+  <p class="meta" style="margin-top:28px"><a href="termeni.html">Termeni de utilizare</a></p>
+</main>
+</body>
+</html>
