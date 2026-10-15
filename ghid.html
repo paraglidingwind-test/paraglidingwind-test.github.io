@@ -269,11 +269,12 @@ footer{margin-top:44px;padding-top:20px;border-top:1px solid var(--line);color:v
     <h2><span class="n">8</span>Limite, ore și limbă</h2>
     <p>Butonul <b>Setări</b>, jos.</p>
     <div class="step">
-      <a class="shot" href="img/guide/ro/setari.webp"><img src="img/guide/ro/setari.webp" width="720" height="1534" loading="lazy" decoding="async" alt="Setările: profilurile de limite, pragurile personalizate, orele afișate și limba"></a>
+      <a class="shot" href="img/guide/ro/setari.webp"><img src="img/guide/ro/setari.webp" width="720" height="2380" loading="lazy" decoding="async" alt="Setările: profilurile de limite, pragurile personalizate, orele afișate, modelul meteo și limba"></a>
       <ol class="marks">
         <li><b>Limitele tale</b>: Elev / începător, Pilot sau Avansat. Toate culorile se recalculează pe loc.</li>
         <li><b>Personalizat</b>: pragurile tale, în m/s.</li>
         <li><b>Ore afișate</b>: implicit 08–20.</li>
+        <li><b>Modelul meteo</b>: Automat (implicit), ICON, ECMWF sau GFS. Vezi <a href="#faq">de ce diferă cifrele față de Windy</a>.</li>
         <li><b>Limba</b>: română sau engleză.</li>
       </ol>
     </div>
@@ -357,13 +358,14 @@ footer{margin-top:44px;padding-top:20px;border-top:1px solid var(--line);color:v
       <li>Sub 1 m/s ora e <b>Calm</b>: direcția nu mai contează. Rafalele, ploaia, vântul la altitudine și furtunile se verifică în continuare.</li>
       <li>Noaptea (după prognoza de lumină pentru fiecare oră) nu se dă verdict.</li>
       <li>O zi e <b>Favorabil</b> (în „Pe scurt”, în punctele zilelor și în pagina decolării) doar cu cel puțin <b>2 ore favorabile la rând</b>.</li>
-      <li>Prognoza vine de la Open-Meteo și e calculată pe un caroiaj de câțiva kilometri.</li>
+      <li>Prognoza vine de la Open-Meteo, din modelul ales în Setări (implicit Automat), calculat pe un caroiaj de câțiva până la câteva zeci de kilometri, după model.</li>
     </ul>
   </section>
 
   <section id="faq">
     <h2><span class="n">12</span>Întrebări frecvente</h2>
     <details><summary>De ce două decolări apropiate au exact același vânt?</summary><div><p>Prognoza e calculată pe un caroiaj de câțiva kilometri, iar decolările din același pătrat primesc același vânt. Verdictul diferă după direcțiile fiecăreia.</p></div></details>
+    <details><summary>De ce diferă cifrele față de Windy sau Meteoblue?</summary><div><p>Fiecare folosește alt model meteo. Aplicația folosește implicit modelul ales automat de Open-Meteo (pentru decolările din România, ICON-EU, al serviciului meteo german); Windy arată implicit ECMWF; Meteoblue are modelele lui. Diferențe de 0,5–1 m/s sunt normale. Din <b>Setări → Modelul meteo</b> poți alege ICON, ECMWF sau GFS, iar în fișa fiecărei ore scrie ce model e folosit. Când modelele diferă mult între ele, prognoza e nesigură.</p></div></details>
     <details><summary>Vântul e slab. De ce e „Marginal” sau „Nu”?</summary><div><p>Atinge celula; motivul e în fișa orei. Des întâlnite: rafale mult peste vântul mediu (turbulent), vânt tare la altitudine sau din spatele decolării, risc de supradezvoltare, o decolare fără direcții.</p></div></details>
     <details><summary>Cât de des se actualizează prognoza?</summary><div><p>Open-Meteo își actualizează modelele de câteva ori pe zi. Aplicația descarcă din nou prognoza când o deschizi sau revii în ea, dacă cea salvată e mai veche de 30 de minute. Cu <b>↻</b> o descarci oricând.</p></div></details>
     <details><summary>Ce se întâmplă fără semnal?</summary><div><p>Vezi ultima prognoză descărcată, cu un mesaj sus și ora la care a fost descărcată. Zilele notate în jurnal se salvează pe telefon și ajung în Google Drive la următoarea sincronizare.</p></div></details>

@@ -269,11 +269,12 @@ footer{margin-top:44px;padding-top:20px;border-top:1px solid var(--line);color:v
     <h2><span class="n">8</span>Limits, hours and language</h2>
     <p>The <b>Settings</b> button at the bottom.</p>
     <div class="step">
-      <a class="shot" href="img/guide/en/setari.webp"><img src="img/guide/en/setari.webp" width="720" height="1534" loading="lazy" decoding="async" alt="Settings: the limit profiles, custom thresholds, hours shown and language"></a>
+      <a class="shot" href="img/guide/en/setari.webp"><img src="img/guide/en/setari.webp" width="720" height="2422" loading="lazy" decoding="async" alt="Settings: the limit profiles, custom thresholds, hours shown, weather model and language"></a>
       <ol class="marks">
         <li><b>Your limits</b>: Student / beginner, Pilot or Advanced. All the colours are recalculated straight away.</li>
         <li><b>Custom</b>: your own thresholds, in m/s.</li>
         <li><b>Hours shown</b>: 08–20 by default.</li>
+        <li><b>Weather model</b>: Automatic (default), ICON, ECMWF or GFS. See <a href="#faq">why the numbers differ from Windy</a>.</li>
         <li><b>Language</b>: Romanian or English.</li>
       </ol>
     </div>
@@ -357,13 +358,14 @@ footer{margin-top:44px;padding-top:20px;border-top:1px solid var(--line);color:v
       <li>Below 1 m/s the hour is <b>Calm</b>: the direction no longer matters. Gusts, rain, wind aloft and storms are still checked.</li>
       <li>At night (from the forecast's daylight flag for each hour) there is no verdict.</li>
       <li>A day is <b>Favourable</b> (in the Overview, the day dots and the takeoff page) only with at least <b>2 favourable hours in a row</b>.</li>
-      <li>The forecast comes from Open-Meteo and is computed on a grid a few kilometres wide.</li>
+      <li>The forecast comes from Open-Meteo, from the model chosen in Settings (Automatic by default), computed on a grid from a few to a few tens of kilometres wide, depending on the model.</li>
     </ul>
   </section>
 
   <section id="faq">
     <h2><span class="n">12</span>Questions</h2>
     <details><summary>Why do two nearby takeoffs have exactly the same wind?</summary><div><p>The forecast is computed on a grid a few kilometres wide, and takeoffs in the same grid square get the same wind. The verdict still differs, by each takeoff's directions.</p></div></details>
+    <details><summary>Why do the numbers differ from Windy or Meteoblue?</summary><div><p>Each uses a different weather model. The app uses, by default, the model Open-Meteo picks automatically (for takeoffs in Romania, ICON-EU, from the German weather service); Windy shows ECMWF by default; Meteoblue has its own models. Differences of 0.5–1 m/s are normal. In <b>Settings → Weather model</b> you can choose ICON, ECMWF or GFS, and each hour's sheet says which model is used. When the models differ a lot, the forecast is uncertain.</p></div></details>
     <details><summary>The wind is light. Why is it “Marginal” or “No”?</summary><div><p>Tap the cell; the reason is in the hour's sheet. Common ones: gusts well above the mean wind (turbulent), strong wind aloft or wind aloft from behind the takeoff, overdevelopment risk, a takeoff without directions.</p></div></details>
     <details><summary>How often is the forecast updated?</summary><div><p>Open-Meteo updates its models several times a day. The app downloads the forecast again when you open or return to it, if the saved one is older than 30 minutes. <b>↻</b> downloads it any time.</p></div></details>
     <details><summary>What happens without signal?</summary><div><p>You see the last forecast downloaded, with a message at the top and the time it was downloaded. Days you add to the log are saved on the phone and reach Google Drive at the next sync.</p></div></details>
