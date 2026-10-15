@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>User guide · Paragliding Wind</title>
+<meta name="description" content="How to use Paragliding Wind: pick your takeoffs, read the hourly wind board, its colours and warnings, the takeoff page and the flight log.">
+<link rel="alternate" hreflang="ro" href="ghid.html">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&family=Barlow+Semi+Condensed:wght@400;600;700&display=swap">
+<style>
+/* Aceleași culori și fonturi ca aplicația. Capturile sunt făcute de tools/guide-shots.mjs; cercurile albastre din ele = listele numerotate. */
+:root{--bg:#f2f5f7;--surface:#fff;--sunk:#e8edf1;--ink:#13212b;--muted:#5a6a76;--line:#d5dde3;--accent:#c4500b;--mark:#2563eb;
+  --go:#0f6b3c;--go-bg:#d3f2df;--maybe:#7a5200;--maybe-bg:#fbe7a8;--no:#8a1814;--no-bg:#efada5;--calm:#45535e;--calm-bg:#e3e9ee;--night-bg:#dfe5ea;
+  --f-display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;--f-ui:"Barlow Semi Condensed","Roboto Condensed",system-ui,sans-serif;color-scheme:light}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0d151b;--surface:#152029;--sunk:#1b2832;--ink:#e4ebf0;--muted:#93a3ae;--line:#26343e;--accent:#ff8a3d;--mark:#5b8def;
+  --go:#8ff0b9;--go-bg:#22603f;--maybe:#ffd77a;--maybe-bg:#57440a;--no:#ffb4ac;--no-bg:#3a0f12;--calm:#a9b7c1;--calm-bg:#1f2c36;--night-bg:#0a1116;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0d151b;--surface:#152029;--sunk:#1b2832;--ink:#e4ebf0;--muted:#93a3ae;--line:#26343e;--accent:#ff8a3d;--mark:#5b8def;
+  --go:#8ff0b9;--go-bg:#22603f;--maybe:#ffd77a;--maybe-bg:#57440a;--no:#ffb4ac;--no-bg:#3a0f12;--calm:#a9b7c1;--calm-bg:#1f2c36;--night-bg:#0a1116;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:12px}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.55 var(--f-ui);padding:env(safe-area-inset-top,0px) 16px env(safe-area-inset-bottom,0px)}
+main{max-width:980px;margin:0 auto;padding-block:20px 56px}
+h1{font:700 40px/1.05 var(--f-display);text-transform:uppercase;letter-spacing:.02em;margin:18px 0 10px;text-wrap:balance}
+h2{display:flex;align-items:center;gap:12px;font:700 26px/1.15 var(--f-display);text-transform:uppercase;letter-spacing:.03em;margin:0 0 10px;text-wrap:balance}
+h2 .n{flex:0 0 auto;display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--ink);color:var(--bg);font-size:20px;letter-spacing:0}
+h3{font:700 20px/1.2 var(--f-display);text-transform:uppercase;letter-spacing:.04em;margin:28px 0 8px}
+p,li{margin:0 0 10px}
+ul{padding-left:22px;margin:0 0 12px}
+a{color:var(--accent);font-weight:600}
+b{font-weight:700}
+.top{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;justify-content:space-between}
+.top img{width:40px;height:40px;border-radius:10px}
+.lead{font-size:19px;max-width:62ch}
+.meta{color:var(--muted);font-size:15px}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:18px 0;max-width:72ch}
+.box.warn{border-left:5px solid var(--accent)}
+.toc{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,158px),1fr));gap:8px;list-style:none;padding:0;margin:22px 0 8px;counter-reset:toc}
+.toc li{margin:0;counter-increment:toc}
+.toc a{display:flex;align-items:center;gap:10px;min-height:48px;height:100%;padding:6px 10px;line-height:1.25;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);text-decoration:none}
+.toc a::before{content:counter(toc);display:grid;place-items:center;flex:0 0 26px;height:26px;border-radius:8px;background:var(--sunk);font:700 15px var(--f-display)}
+.toc a:hover{border-color:var(--accent)}
+section{margin-top:40px;padding-top:28px;border-top:1px solid var(--line)}
+.step{display:grid;gap:18px 32px;align-items:start;margin:20px 0 8px}
+@media (min-width: 760px){ .step{grid-template-columns:300px minmax(0,1fr)} .step .shot{position:sticky;top:16px} }
+.shot{display:block;justify-self:center;width:100%;max-width:300px}
+.shot img{display:block;width:100%;height:auto;border-radius:20px;border:1px solid var(--line);box-shadow:0 10px 30px rgb(0 0 0 / .14);background:var(--surface)}
+.shot.small{max-width:260px}
+ol.marks{list-style:none;padding:0;margin:0;counter-reset:m}
+ol.marks > li{counter-increment:m;position:relative;padding-left:38px;margin:0 0 14px}
+ol.marks > li::before{content:counter(m);position:absolute;left:0;top:1px;width:26px;height:26px;border-radius:50%;background:var(--mark);color:#fff;font:700 14px/26px system-ui,sans-serif;text-align:center}
+.after{margin-top:6px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:10px 14px;align-items:start;margin:12px 0;max-width:72ch}
+.sw{display:inline-block;width:30px;height:30px;border-radius:7px;border:1.5px solid transparent;position:relative;margin-top:1px}
+.sw.go{background:var(--go-bg);border-color:var(--go)} .sw.maybe{background:var(--maybe-bg);border-color:var(--maybe)}
+.sw.no{background:var(--no-bg);border-color:var(--no)} .sw.calm{background:var(--calm-bg);border-color:var(--calm)}
+.sw.night{background:var(--night-bg);border-color:var(--line)} .sw.past{background:var(--go-bg);border-color:var(--go);opacity:.45}
+.sw.warn{background:var(--surface);border-color:var(--line)}
+.sw.warn::before{content:"";position:absolute;top:-1.5px;left:-1.5px;border-top:13px solid var(--ink);border-right:13px solid transparent;border-top-left-radius:6px}
+.tbl{width:100%;overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;background:var(--surface);border:1px solid var(--line);border-radius:12px;font-size:16px}
+th,td{padding:9px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+thead th{font:700 15px var(--f-display);text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:var(--sunk)}
+tr:last-child td{border-bottom:0}
+.limits td + td{white-space:nowrap}
+td.m{color:var(--maybe);font-weight:600} td.x{color:var(--no);font-weight:600}
+/* Pe telefon, regulile devin fișe: ce se verifică, apoi pragul pentru Marginal și pentru Nu. */
+@media (max-width: 600px){
+  .rules thead{display:none}
+  .rules tr{display:block;padding:10px 12px;border-bottom:1px solid var(--line)}
+  .rules tr:last-child{border-bottom:0}
+  .rules td{display:block;padding:2px 0;border:0}
+  .rules td:first-child{font-weight:700;margin-bottom:2px}
+  .rules td[data-k]::before{content:attr(data-k) " ";color:var(--muted);font-weight:600}
+  .rules td.e{display:none}
+}
+details{background:var(--surface);border:1px solid var(--line);border-radius:12px;margin:8px 0;max-width:80ch}
+summary{min-height:48px;padding:12px 16px;font-weight:700;cursor:pointer}
+details > div{padding:0 16px 6px}
+kbd{font:inherit;font-weight:700;padding:0 6px;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+footer{margin-top:44px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:15px}
+</style>
+</head>
+<body>
+<main>
+  <div class="top">
+    <p style="margin:0"><a href="./?lang=en">← Back to the app</a></p>
+    <p style="margin:0"><a href="ghid.html" hreflang="ro" lang="ro">Română</a></p>
+  </div>
+  <h1>User guide</h1>
+  <p class="lead">Paragliding Wind puts the hourly wind at all your takeoffs in one table and colours each hour by the takeoff's directions and your own limits. This guide takes you step by step, from the first start to the flight log.</p>
+  <div class="box warn"><b>Important.</b> The app reads a model forecast (Open-Meteo); it does not measure the wind. The colours help you choose where and when it is worth going. The decision to launch is yours, at takeoff, based on the real conditions.</div>
+  <p class="meta">The screenshots show an example day, 16 October 2026, with takeoffs around Cluj, Romania. The numbered blue circles match the lists next to each picture. Tap a picture to see it full size.</p>
+
+  <nav aria-label="Contents">
+    <ol class="toc">
+      <li><a href="#start">First start</a></li>
+      <li><a href="#board">The hourly board</a></li>
+      <li><a href="#cell">One cell, explained</a></li>
+      <li><a href="#hour">Why this colour?</a></li>
+      <li><a href="#summary">Overview: the whole day</a></li>
+      <li><a href="#site">The takeoff page</a></li>
+      <li><a href="#sites">Your takeoff list</a></li>
+      <li><a href="#settings">Limits, hours and language</a></li>
+      <li><a href="#log">The flight log</a></li>
+      <li><a href="#install">On your home screen</a></li>
+      <li><a href="#rules">How the verdict is worked out</a></li>
+      <li><a href="#faq">Questions</a></li>
+    </ol>
+  </nav>
+
+  <section id="start">
+    <h2><span class="n">1</span>First start</h2>
+    <p>The first time you open the app, you pick the takeoffs you care about. No account needed.</p>
+    <div class="step">
+      <a class="shot" href="img/guide/en/start.webp"><img src="img/guide/en/start.webp" width="720" height="1480" loading="lazy" decoding="async" alt="The welcome screen, with the buttons Takeoffs near me, Pick on the map and Pick a country"></a>
+      <ol class="marks">
+        <li><b>Takeoffs near me</b>: the takeoffs around you, nearest first. Your phone asks for location permission; your position is not stored and not sent anywhere.</li>
+        <li><b>Pick on the map</b>: the same takeoffs, on a map.</li>
+        <li><b>Pick a country</b>, if you'd rather not share your location or you fly somewhere else.</li>
+        <li><b>Import it</b>: have an Excel export of your log from another phone? It brings back both your takeoffs and your flying days.</li>
+      </ol>
+    </div>
+    <div class="step">
+      <a class="shot" href="img/guide/en/alege.webp"><img src="img/guide/en/alege.webp" width="720" height="1480" loading="lazy" decoding="async" alt="The list of takeoffs within 100 km, with three takeoffs ticked"></a>
+      <ol class="marks">
+        <li>The area: <b>Near me</b>, <b>Country</b> or <b>Whole world</b>. The whole world means 11,508 takeoffs (about 1 MB), so it loads only when you ask.</li>
+        <li>The radius around you: 25, 50, 100 or 200 km.</li>
+        <li><b>List</b> or <b>Map</b>. In the list you can search by name.</li>
+        <li>Tap a takeoff to tick or untick it. The circle on the left shows its directions: green = good, yellow = marginal. “no directions” means ParaglidingEarth doesn't have them (see <a href="#nodir">below</a>).</li>
+        <li><b>Continue</b>, then pick your limits (Student, Pilot or Advanced, <a href="#settings">details</a>) and tap <b>Done</b>.</li>
+      </ol>
+    </div>
+    <div class="step">
+      <a class="shot" href="img/guide/en/harta.webp"><img src="img/guide/en/harta.webp" width="720" height="1480" loading="lazy" decoding="async" alt="The map with the takeoffs around you, the 100 km radius and a takeoff's popup with the Add to my list button"></a>
+      <ol class="marks">
+        <li>Tap a dot to see the takeoff: altitude, distance, directions. <b>Add to my list</b> ticks it.</li>
+        <li><b>Continue</b>, as with the list.</li>
+      </ol>
+    </div>
+    <p class="after">On the map, orange dots are the takeoffs you picked and dots with a yellow outline have no directions. The blue circle is the radius you chose, with you in the middle. You can change everything later: takeoffs in <b>Sites</b>, limits in <b>Settings</b>.</p>
+  </section>
+
+  <section id="board">
+    <h2><span class="n">2</span>The hourly board</h2>
+    <p>The main screen: each row is a takeoff, each column an hour. The four parts of the app are at the bottom.</p>
+    <div class="step">
+      <a class="shot" href="img/guide/en/tabla.webp"><img src="img/guide/en/tabla.webp" width="720" height="1480" loading="lazy" decoding="async" alt="The board with the hourly wind at seven takeoffs, today, starting at the current hour"></a>
+      <ol class="marks">
+        <li><b>The days</b>: today and the next 6. Each dot is a takeoff, in your list's order, in the colour of its day; green means at least 2 favourable hours in a row. Tap a day to see it.</li>
+        <li><b>By hour</b> or <b>Overview</b>: the board with every hour, or the <a href="#summary">day at a glance</a>.</li>
+        <li><b>The takeoff</b>: name, altitude and the circle of directions. <b>LIVE</b> = there is a Holfuy station within 5 km. Tap the name for the <a href="#site">takeoff page</a>.</li>
+        <li><b>The current hour.</b> Today, the board starts at the current hour; past hours stay on the left, faded. Swipe sideways for the other hours. On other days, the board starts at the first favourable hour.</li>
+        <li><b>One hour at one takeoff.</b> Tap it to see <a href="#hour">why it has this colour</a>.</li>
+        <li><b>↻</b> downloads the forecast again; the line at the top says when it was updated. The forecast also refreshes by itself when you open or return to the app, if it is older than 30 minutes.</li>
+        <li>Navigation: <b>Forecast</b> (the board), <b>Log</b>, <b>Sites</b>, <b>Settings</b>.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="cell">
+    <h2><span class="n">3</span>One cell, explained</h2>
+    <div class="step">
+      <a class="shot small" href="img/guide/en/celula.webp"><img src="img/guide/en/celula.webp" width="598" height="584" loading="lazy" decoding="async" alt="One cell, enlarged: the warning corner, the sky icon, the wind arrow, the wind and the gusts"></a>
+      <ol class="marks">
+        <li><b>The marked corner</b>: a warning. Something about this hour needs reading: strong wind aloft, risk of storms or overdevelopment, or a takeoff without directions.</li>
+        <li><b>The sky</b>: clear, clouds (with their type), rain, fog, snow, thunderstorm.</li>
+        <li><b>The arrow</b> shows where the wind is going. An easterly wind has the arrow pointing west.</li>
+        <li><b>The big number</b>: the mean wind at 10 m, in m/s.</li>
+        <li><b>The small number</b>: the gusts, in m/s. When it rains, the rain in mm shows instead.</li>
+      </ol>
+    </div>
+    <h3>The colours</h3>
+    <div class="kv">
+      <span class="sw go"></span><span><b>Favourable</b>: a good direction and wind within your limits.</span>
+      <span class="sw maybe"></span><span><b>Marginal</b>: possible, with care. A marginal direction, wind near your limit, gusts well above the mean wind, strong wind aloft, overdevelopment risk or a takeoff without directions.</span>
+      <span class="sw no"></span><span><b>No</b>: the wrong direction, wind or gusts above your limits, rain or a thunderstorm.</span>
+      <span class="sw calm"></span><span><b>Calm</b>: wind below 1 m/s; the direction no longer matters.</span>
+      <span class="sw warn"></span><span><b>Warning</b>: the black corner; the details are in the hour's sheet.</span>
+      <span class="sw night"></span><span><b>Night</b>: no flying light; no verdict.</span>
+      <span class="sw past"></span><span><b>Faded</b>: hours already past today.</span>
+    </div>
+    <p>The colours stay distinct for colour-blind users too. The exact words are in each hour's sheet.</p>
+  </section>
+
+  <section id="hour">
+    <h2><span class="n">4</span>Why this colour?</h2>
+    <p>Tap any cell. The hour's sheet shows the verdict and every reason that lowered it.</p>
+    <div class="step">
+      <a class="shot" href="img/guide/en/ora.webp"><img src="img/guide/en/ora.webp" width="720" height="1470" loading="lazy" decoding="async" alt="The sheet for 11:00 at Rimetea V: Not flyable, with three reasons, the sky and the hour's data"></a>
+      <ol class="marks">
+        <li><b>The verdict</b>, with the wind arrow.</li>
+        <li><b>The reasons</b>: every rule that counted; warnings have the marked corner. Here: the wrong direction, gusts 6 m/s above the mean wind (turbulent) and wind at ~1500 m from behind the takeoff (rotor risk).</li>
+        <li><b>The sky</b>: the cloud type and what it means for flying.</li>
+        <li><b>The hour's data</b>: wind at 10 m and at ~1500 m, gusts, clouds by level, rain, instability (CAPE and LI), temperature, sunrise and sunset, the takeoff's directions.</li>
+        <li>The same takeoff in <b>Windy</b>, <b>Meteoblue</b> and on a map.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="summary">
+    <h2><span class="n">5</span>Overview: the whole day</h2>
+    <p>On a phone, “By hour” shows 4–5 hours at a time. “Overview” fits the whole day on one screen.</p>
+    <div class="step">
+      <a class="shot" href="img/guide/en/scurt.webp"><img src="img/guide/en/scurt.webp" width="720" height="1480" loading="lazy" decoding="async" alt="The Overview: for each takeoff, a strip with the day's hours and the best window"></a>
+      <ol class="marks">
+        <li><b>Overview</b>. The app remembers your choice.</li>
+        <li><b>Best first</b>: takeoffs with a favourable window move to the top. When it's off, the order is your list's.</li>
+        <li><b>The strip of hours</b>: one square per hour, from 08 to 20, in the board's colours.</li>
+        <li><b>The best window</b>, for example “Favourable 10–15 (6 hours) · wind from NE 1–2 m/s”. “Favourable” needs at least 2 good hours in a row; a single good hour shows as “Only 15:00”. When instability is forecast, “overdevelopment risk from …” is added.</li>
+      </ol>
+    </div>
+    <p class="after">Tap a row: the board switches to “By hour”, at that takeoff's window, with the row highlighted.</p>
+  </section>
+
+  <section id="site">
+    <h2><span class="n">6</span>The takeoff page</h2>
+    <p>Tap a takeoff's name on the board.</p>
+    <div class="step">
+      <a class="shot" href="img/guide/en/sit.webp"><img src="img/guide/en/sit.webp" width="720" height="1866" loading="lazy" decoding="async" alt="The Liteni takeoff page: directions, the next days, the wind measured now and links"></a>
+      <ol class="marks">
+        <li>The takeoff's <b>directions</b> (green = good, yellow = marginal) and altitude.</li>
+        <li><b>✓ I flew here</b> adds a flying day to your <a href="#log">log</a>, with this takeoff already filled in.</li>
+        <li><b>Edit directions</b>, if you know better than ParaglidingEarth.</li>
+        <li><b>Next days</b>: one strip of hours per day and the best window. Tap a day to open it on the board.</li>
+        <li><b>Wind now</b>: the widget of the nearest Holfuy station (up to 5 km). It is folded and loads only when you open it.</li>
+        <li>Links to <b>Windy</b>, <b>Meteoblue</b> and a map.</li>
+      </ol>
+    </div>
+    <h3 id="nodir">Takeoffs without directions</h3>
+    <p>About a third of the takeoffs in ParaglidingEarth have no wind directions recorded. For those, the app can't tell whether the wind is blowing up the slope, so the verdict is <b>Marginal at best</b>, with the warning corner, until you set the directions.</p>
+    <div class="step">
+      <a class="shot" href="img/guide/en/fara-directii.webp"><img src="img/guide/en/fara-directii.webp" width="720" height="1046" loading="lazy" decoding="async" alt="A takeoff without directions: the suggestion from the slope and the direction rose to confirm"></a>
+      <ol class="marks">
+        <li><b>Suggest from the slope</b>: the app reads the altitude at 8 points 100 m around the takeoff and suggests the direction the slope falls away to.</li>
+        <li>Check and correct. Tap a direction to change it: grey = no, yellow = marginal, green = good.</li>
+        <li><b>Save directions</b>. From now on the takeoff gets a normal verdict.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="sites">
+    <h2><span class="n">7</span>Your takeoff list</h2>
+    <p>The <b>Sites</b> button at the bottom.</p>
+    <div class="step">
+      <a class="shot" href="img/guide/en/situri.webp"><img src="img/guide/en/situri.webp" width="720" height="1346" loading="lazy" decoding="async" alt="The list of takeoffs, with move and delete buttons and the Add takeoffs button"></a>
+      <ol class="marks">
+        <li><b>↑ ↓</b> change the order; the same order is used on the board and in the day dots. <b>✕</b> removes the takeoff; you have 5 seconds to tap <b>Undo</b>.</li>
+        <li><b>Add takeoffs</b>: the same screen as at the first start (near you, a country or the whole world; list or map).</li>
+        <li><b>Start setup again</b>: pick your takeoffs from scratch (tap twice). Your log is not touched.</li>
+        <li><b>Add a takeoff that is not in the list</b>: see below.</li>
+      </ol>
+    </div>
+    <h3>A new takeoff, by hand</h3>
+    <ul>
+      <li><b>Pick on the map</b> and drop a pin on the takeoff. The app fills in the coordinates, altitude, place name and the directions suggested by the slope. If ParaglidingEarth already has a takeoff within 1 km, the app offers it.</li>
+      <li><b>I'm at the takeoff (GPS)</b> drops the pin where you are.</li>
+      <li>Or type the coordinates. From Google Maps: long-press the takeoff and copy the coordinates shown at the top. Short links (maps.app.goo.gl) don't contain the coordinates.</li>
+      <li><b>Holfuy station</b> (optional): the station number or its link. Empty = the nearest one, up to 5 km.</li>
+      <li><b>Directions</b>: tap each direction (grey = no, yellow = marginal, green = good). At least one must be set.</li>
+    </ul>
+  </section>
+
+  <section id="settings">
+    <h2><span class="n">8</span>Limits, hours and language</h2>
+    <p>The <b>Settings</b> button at the bottom.</p>
+    <div class="step">
+      <a class="shot" href="img/guide/en/setari.webp"><img src="img/guide/en/setari.webp" width="720" height="1784" loading="lazy" decoding="async" alt="Settings: the limit profiles, custom thresholds, hours shown, language and the guide"></a>
+      <ol class="marks">
+        <li><b>Your limits</b>: Student / beginner, Pilot or Advanced. All the colours are recalculated straight away.</li>
+        <li><b>Custom</b>: your own thresholds, in m/s.</li>
+        <li><b>Hours shown</b>: 08–20 by default.</li>
+        <li><b>Language</b>: Romanian or English.</li>
+        <li><b>User guide</b>: this page.</li>
+      </ol>
+    </div>
+    <div class="tbl limits"><table>
+      <thead><tr><th></th><th>Student / beginner</th><th>Pilot</th><th>Advanced</th></tr></thead>
+      <tbody>
+        <tr><td>Good wind up to</td><td>4 m/s</td><td>5 m/s</td><td>7 m/s</td></tr>
+        <tr><td>Marginal up to</td><td>5 m/s</td><td>7 m/s</td><td>9 m/s</td></tr>
+        <tr><td>Maximum gusts</td><td>6 m/s</td><td>9 m/s</td><td>11 m/s</td></tr>
+        <tr><td>Gust − wind (turbulent) above</td><td>3 m/s</td><td>4 m/s</td><td>5 m/s</td></tr>
+      </tbody>
+    </table></div>
+    <p>In every profile: calm below 1 m/s, rain above 0.2 mm/h.</p>
+  </section>
+
+  <section id="log">
+    <h2><span class="n">9</span>The flight log</h2>
+    <p>One entry is one flying day at one site, with your total airtime that day. The log stays on your phone and, if you want, in your Google Drive.</p>
+    <div class="step">
+      <a class="shot" href="img/guide/en/jurnal.webp"><img src="img/guide/en/jurnal.webp" width="720" height="1684" loading="lazy" decoding="async" alt="The flight log: Google sign-in, the totals, the add and export buttons and the list by month"></a>
+      <ol class="marks">
+        <li><b>Continue with Google</b> (optional): the log is kept in your Google Drive, as an Excel file, and synced across your devices. The app can only see its own file.</li>
+        <li><b>The totals</b>: airtime, flying days, sites. Below them, the current year.</li>
+        <li><b>+ Add flying day</b>.</li>
+        <li><b>Export Excel</b> and <b>Import Excel</b>: your backup. Importing adds only what's missing.</li>
+        <li><b>By day</b>, <b>By site</b> or <b>By year</b>.</li>
+        <li>Tap a day to edit or delete it.</li>
+      </ol>
+    </div>
+    <div class="step">
+      <a class="shot" href="img/guide/en/zi.webp"><img src="img/guide/en/zi.webp" width="720" height="916" loading="lazy" decoding="async" alt="The form for a flying day: site, date and airtime"></a>
+      <ol class="marks">
+        <li><b>The site</b>: your takeoffs, the sites in your log or “Other site…”.</li>
+        <li><b>The date</b>. Past days are fine.</li>
+        <li><b>Airtime</b> that day, in hours and minutes. 80 minutes becomes 1 h 20 min.</li>
+        <li><b>Save</b>.</li>
+      </ol>
+    </div>
+    <div class="step">
+      <a class="shot" href="img/guide/en/ani.webp"><img src="img/guide/en/ani.webp" width="720" height="858" loading="lazy" decoding="async" alt="The log by year: for each year, the days, sites, airtime and one bar per month"></a>
+      <ol class="marks">
+        <li>Each year: flying days, sites and total airtime. Tap a year to see its days, with the “2025 ✕” filter; the totals at the top then show only that year.</li>
+        <li>One bar per month, on the same scale for every year, so you can compare them.</li>
+      </ol>
+    </div>
+    <h3>Backup and a new phone</h3>
+    <ul>
+      <li><b>With Google</b>: on the new phone, open the Log, tap <b>Continue with Google</b> and the log comes back from Drive. The file is called “Vânt la Decolare - jurnal de zbor.xlsx” and has the same sheets as the export.</li>
+      <li><b>Without Google</b>: <b>Export Excel</b> on the old phone, then <b>Import Excel</b> on the new one (or <b>Import it</b> at the first start). Your takeoffs come along too, from the “Sites” sheet.</li>
+      <li><b>Signing out</b> (tap twice) removes the log from that device; it stays in Drive. If you have changes that haven't reached Drive yet, the app won't sign you out.</li>
+    </ul>
+    <p>More about your data in the <a href="privacy.html">Privacy policy</a>.</p>
+  </section>
+
+  <section id="install">
+    <h2><span class="n">10</span>On your home screen</h2>
+    <p>The app is a web page. You can put it on your home screen, like an app, without a store:</p>
+    <ul>
+      <li><b>Android (Chrome)</b>: open <a href="./?lang=en">paraglidingwind.com</a>, tap the <kbd>⋮</kbd> menu, then <b>Add to Home screen</b> (or <b>Install app</b>).</li>
+      <li><b>iPhone (Safari)</b>: tap the Share button, then <b>Add to Home Screen</b>.</li>
+    </ul>
+    <p>Your takeoffs, limits and log live in the browser where you use the app. Clearing the site's data in the browser clears them too, so keep an Excel export or sign in with Google. On iPhone, the home-screen app keeps its data separate from Safari: if you started in Safari, bring your log over with Google or Import Excel.</p>
+  </section>
+
+  <section id="rules">
+    <h2><span class="n">11</span>How the verdict is worked out</h2>
+    <p>For every hour the app checks the rules below; the hour's verdict is the worst of them. The wind and gust thresholds come from your limits (the table shows Pilot).</p>
+    <div class="tbl rules"><table>
+      <thead><tr><th>What is checked</th><th>Marginal</th><th>No</th></tr></thead>
+      <tbody>
+        <tr><td>Wind direction at 10 m (8 directions), against the takeoff's directions</td><td class="m" data-k="Marginal:">a marginal direction; a takeoff without directions</td><td class="x" data-k="No:">the wrong direction</td></tr>
+        <tr><td>Mean wind at 10 m</td><td class="m" data-k="Marginal:">above 5 m/s</td><td class="x" data-k="No:">above 7 m/s</td></tr>
+        <tr><td>Gusts</td><td class="m" data-k="Marginal:">more than 4 m/s above the mean wind (turbulent)</td><td class="x" data-k="No:">above 9 m/s</td></tr>
+        <tr><td>Rain</td><td class="e">–</td><td class="x" data-k="No:">above 0.2 mm/h</td></tr>
+        <tr><td>Wind at ~1500 m (850 hPa)</td><td class="m" data-k="Marginal:">above 8 m/s; or above 5 m/s from behind the takeoff (rotor risk)</td><td class="x" data-k="No:">above 12 m/s</td></tr>
+        <tr><td>Thunderstorm</td><td class="e">–</td><td class="x" data-k="No:">forecast for that hour or the next 2 hours</td></tr>
+        <tr><td>Instability</td><td class="m" data-k="Marginal:">CAPE above 800 J/kg and LI below −2 (overdevelopment risk)</td><td class="e">–</td></tr>
+      </tbody>
+    </table></div>
+    <ul>
+      <li>Below 1 m/s the hour is <b>Calm</b>: the direction no longer matters. Gusts, rain, wind aloft and storms are still checked.</li>
+      <li>At night (from the forecast's daylight flag for each hour) there is no verdict.</li>
+      <li>A day is <b>Favourable</b> (in the Overview, the day dots and the takeoff page) only with at least <b>2 favourable hours in a row</b>.</li>
+      <li>The forecast comes from Open-Meteo and is computed on a grid a few kilometres wide.</li>
+    </ul>
+  </section>
+
+  <section id="faq">
+    <h2><span class="n">12</span>Questions</h2>
+    <details><summary>Why do two nearby takeoffs have exactly the same wind?</summary><div><p>The forecast is computed on a grid a few kilometres wide, and takeoffs in the same grid square get the same wind. The verdict still differs, by each takeoff's directions.</p></div></details>
+    <details><summary>The wind is light. Why is it “Marginal” or “No”?</summary><div><p>Tap the cell; the reason is in the hour's sheet. Common ones: gusts well above the mean wind (turbulent), strong wind aloft or wind aloft from behind the takeoff, overdevelopment risk, a takeoff without directions.</p></div></details>
+    <details><summary>How often is the forecast updated?</summary><div><p>Open-Meteo updates its models several times a day. The app downloads the forecast again when you open or return to it, if the saved one is older than 30 minutes. <b>↻</b> downloads it any time.</p></div></details>
+    <details><summary>What happens without signal?</summary><div><p>You see the last forecast downloaded, with a message at the top and the time it was downloaded. Days you add to the log are saved on the phone and reach Google Drive at the next sync.</p></div></details>
+    <details><summary>Where is my data?</summary><div><p>On your phone, in the browser. The app has no server and collects nothing about you. Optionally, your log is kept in your own Google Drive. Details in the <a href="privacy.html">Privacy policy</a>.</p></div></details>
+    <details><summary>Where do the takeoffs and their directions come from?</summary><div><p>From ParaglidingEarth (CC BY-SA), the takeoff database maintained by pilots. The directions are the ones recorded there; you can correct them on the takeoff page.</p></div></details>
+    <details><summary>I found a mistake or have an idea.</summary><div><p>Write on <a href="https://github.com/paraglidingwind/paraglidingwind.github.io/issues" target="_blank" rel="noopener">GitHub</a>.</p></div></details>
+  </section>
+
+  <footer>
+    <p>Forecast: Open-Meteo · Takeoffs: ParaglidingEarth (CC BY-SA) · Live wind: Holfuy</p>
+    <p><a href="./?lang=en">Back to the app</a> · <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · <a href="ghid.html" hreflang="ro" lang="ro">Română</a></p>
+  </footer>
+</main>
+</body>
+</html>

@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Ghid de utilizare · Vânt la Decolare</title>
+<meta name="description" content="Cum folosești Vânt la Decolare: alegi decolările, citești tabla de vânt pe ore, culorile și avertizările, pagina decolării și jurnalul de zbor.">
+<link rel="alternate" hreflang="en" href="guide.html">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&family=Barlow+Semi+Condensed:wght@400;600;700&display=swap">
+<style>
+/* Aceleași culori și fonturi ca aplicația. Capturile sunt făcute de tools/guide-shots.mjs; cercurile albastre din ele = listele numerotate. */
+:root{--bg:#f2f5f7;--surface:#fff;--sunk:#e8edf1;--ink:#13212b;--muted:#5a6a76;--line:#d5dde3;--accent:#c4500b;--mark:#2563eb;
+  --go:#0f6b3c;--go-bg:#d3f2df;--maybe:#7a5200;--maybe-bg:#fbe7a8;--no:#8a1814;--no-bg:#efada5;--calm:#45535e;--calm-bg:#e3e9ee;--night-bg:#dfe5ea;
+  --f-display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;--f-ui:"Barlow Semi Condensed","Roboto Condensed",system-ui,sans-serif;color-scheme:light}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0d151b;--surface:#152029;--sunk:#1b2832;--ink:#e4ebf0;--muted:#93a3ae;--line:#26343e;--accent:#ff8a3d;--mark:#5b8def;
+  --go:#8ff0b9;--go-bg:#22603f;--maybe:#ffd77a;--maybe-bg:#57440a;--no:#ffb4ac;--no-bg:#3a0f12;--calm:#a9b7c1;--calm-bg:#1f2c36;--night-bg:#0a1116;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0d151b;--surface:#152029;--sunk:#1b2832;--ink:#e4ebf0;--muted:#93a3ae;--line:#26343e;--accent:#ff8a3d;--mark:#5b8def;
+  --go:#8ff0b9;--go-bg:#22603f;--maybe:#ffd77a;--maybe-bg:#57440a;--no:#ffb4ac;--no-bg:#3a0f12;--calm:#a9b7c1;--calm-bg:#1f2c36;--night-bg:#0a1116;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:12px}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.55 var(--f-ui);padding:env(safe-area-inset-top,0px) 16px env(safe-area-inset-bottom,0px)}
+main{max-width:980px;margin:0 auto;padding-block:20px 56px}
+h1{font:700 40px/1.05 var(--f-display);text-transform:uppercase;letter-spacing:.02em;margin:18px 0 10px;text-wrap:balance}
+h2{display:flex;align-items:center;gap:12px;font:700 26px/1.15 var(--f-display);text-transform:uppercase;letter-spacing:.03em;margin:0 0 10px;text-wrap:balance}
+h2 .n{flex:0 0 auto;display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--ink);color:var(--bg);font-size:20px;letter-spacing:0}
+h3{font:700 20px/1.2 var(--f-display);text-transform:uppercase;letter-spacing:.04em;margin:28px 0 8px}
+p,li{margin:0 0 10px}
+ul{padding-left:22px;margin:0 0 12px}
+a{color:var(--accent);font-weight:600}
+b{font-weight:700}
+.top{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;justify-content:space-between}
+.top img{width:40px;height:40px;border-radius:10px}
+.lead{font-size:19px;max-width:62ch}
+.meta{color:var(--muted);font-size:15px}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:18px 0;max-width:72ch}
+.box.warn{border-left:5px solid var(--accent)}
+.toc{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,158px),1fr));gap:8px;list-style:none;padding:0;margin:22px 0 8px;counter-reset:toc}
+.toc li{margin:0;counter-increment:toc}
+.toc a{display:flex;align-items:center;gap:10px;min-height:48px;height:100%;padding:6px 10px;line-height:1.25;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);text-decoration:none}
+.toc a::before{content:counter(toc);display:grid;place-items:center;flex:0 0 26px;height:26px;border-radius:8px;background:var(--sunk);font:700 15px var(--f-display)}
+.toc a:hover{border-color:var(--accent)}
+section{margin-top:40px;padding-top:28px;border-top:1px solid var(--line)}
+.step{display:grid;gap:18px 32px;align-items:start;margin:20px 0 8px}
+@media (min-width: 760px){ .step{grid-template-columns:300px minmax(0,1fr)} .step .shot{position:sticky;top:16px} }
+.shot{display:block;justify-self:center;width:100%;max-width:300px}
+.shot img{display:block;width:100%;height:auto;border-radius:20px;border:1px solid var(--line);box-shadow:0 10px 30px rgb(0 0 0 / .14);background:var(--surface)}
+.shot.small{max-width:260px}
+ol.marks{list-style:none;padding:0;margin:0;counter-reset:m}
+ol.marks > li{counter-increment:m;position:relative;padding-left:38px;margin:0 0 14px}
+ol.marks > li::before{content:counter(m);position:absolute;left:0;top:1px;width:26px;height:26px;border-radius:50%;background:var(--mark);color:#fff;font:700 14px/26px system-ui,sans-serif;text-align:center}
+.after{margin-top:6px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:10px 14px;align-items:start;margin:12px 0;max-width:72ch}
+.sw{display:inline-block;width:30px;height:30px;border-radius:7px;border:1.5px solid transparent;position:relative;margin-top:1px}
+.sw.go{background:var(--go-bg);border-color:var(--go)} .sw.maybe{background:var(--maybe-bg);border-color:var(--maybe)}
+.sw.no{background:var(--no-bg);border-color:var(--no)} .sw.calm{background:var(--calm-bg);border-color:var(--calm)}
+.sw.night{background:var(--night-bg);border-color:var(--line)} .sw.past{background:var(--go-bg);border-color:var(--go);opacity:.45}
+.sw.warn{background:var(--surface);border-color:var(--line)}
+.sw.warn::before{content:"";position:absolute;top:-1.5px;left:-1.5px;border-top:13px solid var(--ink);border-right:13px solid transparent;border-top-left-radius:6px}
+.tbl{width:100%;overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;background:var(--surface);border:1px solid var(--line);border-radius:12px;font-size:16px}
+th,td{padding:9px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+thead th{font:700 15px var(--f-display);text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:var(--sunk)}
+tr:last-child td{border-bottom:0}
+.limits td + td{white-space:nowrap}
+td.m{color:var(--maybe);font-weight:600} td.x{color:var(--no);font-weight:600}
+/* Pe telefon, regulile devin fișe: ce se verifică, apoi pragul pentru Marginal și pentru Nu. */
+@media (max-width: 600px){
+  .rules thead{display:none}
+  .rules tr{display:block;padding:10px 12px;border-bottom:1px solid var(--line)}
+  .rules tr:last-child{border-bottom:0}
+  .rules td{display:block;padding:2px 0;border:0}
+  .rules td:first-child{font-weight:700;margin-bottom:2px}
+  .rules td[data-k]::before{content:attr(data-k) " ";color:var(--muted);font-weight:600}
+  .rules td.e{display:none}
+}
+details{background:var(--surface);border:1px solid var(--line);border-radius:12px;margin:8px 0;max-width:80ch}
+summary{min-height:48px;padding:12px 16px;font-weight:700;cursor:pointer}
+details > div{padding:0 16px 6px}
+kbd{font:inherit;font-weight:700;padding:0 6px;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+footer{margin-top:44px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:15px}
+</style>
+</head>
+<body>
+<main>
+  <div class="top">
+    <p style="margin:0"><a href="./?lang=ro">← Înapoi la aplicație</a></p>
+    <p style="margin:0"><a href="guide.html" hreflang="en" lang="en">English</a></p>
+  </div>
+  <h1>Ghid de utilizare</h1>
+  <p class="lead">Vânt la Decolare pune într-un singur tabel vântul pe ore de la toate decolările tale și colorează fiecare oră după direcțiile decolării și după limitele tale. Ghidul te ia pas cu pas, de la prima pornire până la jurnalul de zbor.</p>
+  <div class="box warn"><b>Important.</b> Aplicația citește o prognoză de model (Open-Meteo); nu măsoară vântul. Culorile te ajută să alegi unde și când merită să mergi. Decizia de a decola o iei tu, la decolare, după condițiile reale.</div>
+  <p class="meta">Capturile sunt dintr-o zi de exemplu, 16 octombrie 2026, cu decolări din jurul Clujului. Cercurile albastre numerotate corespund listelor de lângă fiecare imagine. Atinge o imagine ca s-o vezi mare.</p>
+
+  <nav aria-label="Cuprins">
+    <ol class="toc">
+      <li><a href="#start">Prima pornire</a></li>
+      <li><a href="#board">Tabla pe ore</a></li>
+      <li><a href="#cell">O celulă, pe înțeles</a></li>
+      <li><a href="#hour">De ce această culoare?</a></li>
+      <li><a href="#summary">Pe scurt: toată ziua</a></li>
+      <li><a href="#site">Pagina decolării</a></li>
+      <li><a href="#sites">Lista ta de decolări</a></li>
+      <li><a href="#settings">Limite, ore și limbă</a></li>
+      <li><a href="#log">Jurnalul de zbor</a></li>
+      <li><a href="#install">Pe ecranul telefonului</a></li>
+      <li><a href="#rules">Cum se calculează verdictul</a></li>
+      <li><a href="#faq">Întrebări frecvente</a></li>
+    </ol>
+  </nav>
+
+  <section id="start">
+    <h2><span class="n">1</span>Prima pornire</h2>
+    <p>La prima deschidere alegi decolările care te interesează. Nu ai nevoie de cont.</p>
+    <div class="step">
+      <a class="shot" href="img/guide/ro/start.webp"><img src="img/guide/ro/start.webp" width="720" height="1480" loading="lazy" decoding="async" alt="Ecranul de bun venit, cu butoanele Decolări lângă mine, Alege pe hartă și Alege țara"></a>
+      <ol class="marks">
+        <li><b>Decolări lângă mine</b>: decolările din jurul tău, cele mai apropiate primele. Telefonul îți cere permisiunea pentru locație; poziția nu se salvează și nu pleacă nicăieri.</li>
+        <li><b>Alege pe hartă</b>: aceleași decolări, pe hartă.</li>
+        <li><b>Alege țara</b>, dacă nu vrei să dai locația sau zbori în altă parte.</li>
+        <li><b>Importă-l</b>: ai un export Excel din jurnal, de pe alt telefon? Îți aduce înapoi și decolările, și zilele de zbor.</li>
+      </ol>
+    </div>
+    <div class="step">
+      <a class="shot" href="img/guide/ro/alege.webp"><img src="img/guide/ro/alege.webp" width="720" height="1480" loading="lazy" decoding="async" alt="Lista decolărilor pe o rază de 100 km, cu trei decolări bifate"></a>
+      <ol class="marks">
+        <li>Zona: <b>Lângă mine</b>, <b>Țară</b> sau <b>Toată lumea</b>. Toată lumea înseamnă 11.508 decolări (≈ 1 MB), așa că se încarcă doar dacă ceri.</li>
+        <li>Raza în jurul tău: 25, 50, 100 sau 200 km.</li>
+        <li><b>Listă</b> sau <b>Hartă</b>. În listă poți căuta după nume.</li>
+        <li>Atinge o decolare ca s-o bifezi sau s-o debifezi. Cercul din stânga arată direcțiile ei: verde = bune, galben = marginale. „fără direcții” înseamnă că ParaglidingEarth nu le are (vezi <a href="#nodir">mai jos</a>).</li>
+        <li><b>Continuă</b>, apoi alegi limitele (Elev, Pilot sau Avansat, <a href="#settings">detalii</a>) și apeși <b>Gata</b>.</li>
+      </ol>
+    </div>
+    <div class="step">
+      <a class="shot" href="img/guide/ro/harta.webp"><img src="img/guide/ro/harta.webp" width="720" height="1480" loading="lazy" decoding="async" alt="Harta cu decolările din jur, raza de 100 km și fereastra unei decolări cu butonul Adaugă în listă"></a>
+      <ol class="marks">
+        <li>Atinge un punct ca să vezi decolarea: altitudinea, distanța, direcțiile. <b>Adaugă în listă</b> o bifează.</li>
+        <li><b>Continuă</b>, ca la listă.</li>
+      </ol>
+    </div>
+    <p class="after">Pe hartă, punctele portocalii sunt decolările alese, iar cele cu contur galben nu au direcții. Cercul albastru e raza aleasă, cu poziția ta în centru. Le poți schimba oricând: decolările din <b>Situri</b>, limitele din <b>Setări</b>.</p>
+  </section>
+
+  <section id="board">
+    <h2><span class="n">2</span>Tabla pe ore</h2>
+    <p>Ecranul principal: fiecare rând e o decolare, fiecare coloană o oră. Jos ai cele patru secțiuni ale aplicației.</p>
+    <div class="step">
+      <a class="shot" href="img/guide/ro/tabla.webp"><img src="img/guide/ro/tabla.webp" width="720" height="1480" loading="lazy" decoding="async" alt="Tabla cu vântul pe ore pentru șapte decolări, azi, începând cu ora curentă"></a>
+      <ol class="marks">
+        <li><b>Zilele</b>: azi și următoarele 6. Fiecare punct e o decolare, în ordinea din listă, în culoarea zilei ei; verde înseamnă cel puțin 2 ore favorabile la rând. Atinge o zi ca s-o vezi.</li>
+        <li><b>Pe ore</b> sau <b>Pe scurt</b>: tabla cu toate orele, sau <a href="#summary">rezumatul zilei</a>.</li>
+        <li><b>Decolarea</b>: numele, altitudinea și cercul direcțiilor. <b>LIVE</b> = are o stație Holfuy la cel mult 5 km. Atinge numele pentru <a href="#site">pagina decolării</a>.</li>
+        <li><b>Ora curentă.</b> Azi, tabla începe cu ora curentă; orele trecute rămân la stânga, estompate. Glisează orizontal pentru celelalte ore. În altă zi, tabla începe de la prima oră favorabilă.</li>
+        <li><b>O oră la o decolare.</b> Atinge-o ca să vezi <a href="#hour">de ce are culoarea asta</a>.</li>
+        <li><b>↻</b> descarcă din nou prognoza; sus scrie când a fost actualizată. Prognoza se reîmprospătează și singură când deschizi sau revii în aplicație, dacă e mai veche de 30 de minute.</li>
+        <li>Navigarea: <b>Prognoză</b> (tabla), <b>Jurnal</b>, <b>Situri</b>, <b>Setări</b>.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="cell">
+    <h2><span class="n">3</span>O celulă, pe înțeles</h2>
+    <div class="step">
+      <a class="shot small" href="img/guide/ro/celula.webp"><img src="img/guide/ro/celula.webp" width="598" height="584" loading="lazy" decoding="async" alt="O celulă mărită: colțul de avertizare, pictograma cerului, săgeata vântului, vântul și rafalele"></a>
+      <ol class="marks">
+        <li><b>Colțul marcat</b>: o avertizare. Ora are ceva ce trebuie citit: vânt tare la altitudine, risc de furtună sau de supradezvoltare, ori o decolare fără direcții.</li>
+        <li><b>Cerul</b>: senin, nori (cu tipul lor), ploaie, ceață, ninsoare, furtună.</li>
+        <li><b>Săgeata</b> arată încotro bate vântul. Vântul din est are săgeata spre vest.</li>
+        <li><b>Cifra mare</b>: vântul mediu la 10 m, în m/s.</li>
+        <li><b>Cifra mică</b>: rafalele, în m/s. Dacă plouă, în locul ei apare ploaia, în mm.</li>
+      </ol>
+    </div>
+    <h3>Culorile</h3>
+    <div class="kv">
+      <span class="sw go"></span><span><b>Favorabil</b>: direcție bună și vânt în limitele tale.</span>
+      <span class="sw maybe"></span><span><b>Marginal</b>: se poate, cu atenție. Direcție marginală, vânt spre limită, rafale mult peste vântul mediu, vânt tare la altitudine, risc de supradezvoltare sau decolare fără direcții.</span>
+      <span class="sw no"></span><span><b>Nu</b>: direcție nepotrivită, vânt sau rafale peste limite, ploaie sau furtună.</span>
+      <span class="sw calm"></span><span><b>Calm</b>: vânt sub 1 m/s; direcția nu mai contează.</span>
+      <span class="sw warn"></span><span><b>Avertizare</b>: colțul negru; detaliile sunt în fișa orei.</span>
+      <span class="sw night"></span><span><b>Noapte</b>: fără lumină de zbor; nu se dă verdict.</span>
+      <span class="sw past"></span><span><b>Estompat</b>: ore deja trecute azi.</span>
+    </div>
+    <p>Culorile se deosebesc și pentru cei cu daltonism. Cuvintele exacte sunt în fișa fiecărei ore.</p>
+  </section>
+
+  <section id="hour">
+    <h2><span class="n">4</span>De ce această culoare?</h2>
+    <p>Atinge orice celulă. Fișa orei arată verdictul și fiecare motiv care l-a coborât.</p>
+    <div class="step">
+      <a class="shot" href="img/guide/ro/ora.webp"><img src="img/guide/ro/ora.webp" width="720" height="1470" loading="lazy" decoding="async" alt="Fișa orei 11:00 la Rimetea V: Nu e de zbor, cu trei motive, cerul și datele orei"></a>
+      <ol class="marks">
+        <li><b>Verdictul</b>, cu săgeata vântului.</li>
+        <li><b>Motivele</b>: fiecare regulă care a contat; avertizările au colțul marcat. Aici: direcție nepotrivită, rafale cu 6 m/s peste vântul mediu (turbulent) și vânt la ~1500 m din spatele decolării (risc de rotori).</li>
+        <li><b>Cerul</b>: tipul norilor și ce înseamnă pentru zbor.</li>
+        <li><b>Datele orei</b>: vântul la 10 m și la ~1500 m, rafalele, norii pe niveluri, ploaia, instabilitatea (CAPE și LI), temperatura, răsăritul și apusul, direcțiile decolării.</li>
+        <li>Aceeași decolare în <b>Windy</b>, <b>Meteoblue</b> și pe hartă.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="summary">
+    <h2><span class="n">5</span>Pe scurt: toată ziua</h2>
+    <p>Pe telefon, „Pe ore” arată 4–5 ore odată. „Pe scurt” pune toată ziua pe un singur ecran.</p>
+    <div class="step">
+      <a class="shot" href="img/guide/ro/scurt.webp"><img src="img/guide/ro/scurt.webp" width="720" height="1480" loading="lazy" decoding="async" alt="Vederea Pe scurt: pentru fiecare decolare, o bandă cu orele zilei și fereastra cea mai bună"></a>
+      <ol class="marks">
+        <li><b>Pe scurt</b>. Aplicația ține minte ce ai ales.</li>
+        <li><b>Cele mai bune primele</b>: decolările cu fereastră favorabilă urcă în capul listei. Oprit, ordinea e cea din lista ta.</li>
+        <li><b>Banda orelor</b>: un pătrățel pe oră, de la 08 la 20, în culorile din tablă.</li>
+        <li><b>Fereastra cea mai bună</b>, de exemplu „Favorabil 10–15 (6 ore) · vânt din NE 1–2 m/s”. „Favorabil” cere cel puțin 2 ore bune la rând; o oră izolată apare ca „Doar ora 15”. Dacă se anunță instabilitate, se adaugă „risc de supradezvoltare de la …”.</li>
+      </ol>
+    </div>
+    <p class="after">Atinge un rând: tabla trece pe „Pe ore”, la fereastra acelei decolări, cu rândul evidențiat.</p>
+  </section>
+
+  <section id="site">
+    <h2><span class="n">6</span>Pagina decolării</h2>
+    <p>Atinge numele unei decolări în tablă.</p>
+    <div class="step">
+      <a class="shot" href="img/guide/ro/sit.webp"><img src="img/guide/ro/sit.webp" width="720" height="1832" loading="lazy" decoding="async" alt="Pagina decolării Liteni: direcțiile, următoarele zile, vântul măsurat acum și linkuri"></a>
+      <ol class="marks">
+        <li><b>Direcțiile</b> decolării (verde = bune, galben = marginale) și altitudinea.</li>
+        <li><b>✓ Am zburat aici</b> notează o zi de zbor în <a href="#log">jurnal</a>, cu decolarea deja aleasă.</li>
+        <li><b>Modifică direcțiile</b>, dacă știi mai bine decât ParaglidingEarth.</li>
+        <li><b>Următoarele zile</b>: câte o bandă de ore pe zi și fereastra cea mai bună. Atinge o zi ca s-o deschizi în tablă.</li>
+        <li><b>Vântul acum</b>: widgetul stației Holfuy cea mai apropiată (până la 5 km). E pliat și se încarcă doar când îl deschizi.</li>
+        <li>Linkuri spre <b>Windy</b>, <b>Meteoblue</b> și hartă.</li>
+      </ol>
+    </div>
+    <h3 id="nodir">Decolări fără direcții</h3>
+    <p>Cam o treime din decolările din ParaglidingEarth nu au direcțiile trecute. Pentru ele aplicația nu știe dacă vântul bate din față, așa că verdictul e <b>cel mult Marginal</b>, cu colțul de avertizare, până setezi direcțiile.</p>
+    <div class="step">
+      <a class="shot" href="img/guide/ro/fara-directii.webp"><img src="img/guide/ro/fara-directii.webp" width="720" height="1150" loading="lazy" decoding="async" alt="O decolare fără direcții: sugestia din panta terenului și roza direcțiilor de confirmat"></a>
+      <ol class="marks">
+        <li><b>Sugerează din panta terenului</b>: aplicația citește altitudinea în 8 puncte, la 100 m în jurul decolării, și propune direcția în care coboară panta.</li>
+        <li>Verifică și corectează. Atinge o direcție ca s-o schimbi: gri = nu, galben = marginal, verde = bun.</li>
+        <li><b>Salvează direcțiile</b>. De acum decolarea primește verdict normal.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="sites">
+    <h2><span class="n">7</span>Lista ta de decolări</h2>
+    <p>Butonul <b>Situri</b>, jos.</p>
+    <div class="step">
+      <a class="shot" href="img/guide/ro/situri.webp"><img src="img/guide/ro/situri.webp" width="720" height="1346" loading="lazy" decoding="async" alt="Lista decolărilor, cu butoane de mutare și ștergere și butonul Adaugă decolări"></a>
+      <ol class="marks">
+        <li><b>↑ ↓</b> schimbă ordinea; aceeași ordine apare în tablă și în punctele zilelor. <b>✕</b> scoate decolarea din listă; ai 5 secunde să apeși <b>Anulează</b>.</li>
+        <li><b>Adaugă decolări</b>: același ecran ca la prima pornire (lângă tine, țară sau toată lumea; listă sau hartă).</li>
+        <li><b>Reia configurarea</b>: alegi decolările de la zero (apeși de două ori). Jurnalul nu se atinge.</li>
+        <li><b>Adaugă o decolare care nu e în listă</b>: vezi mai jos.</li>
+      </ol>
+    </div>
+    <h3>O decolare nouă, de mână</h3>
+    <ul>
+      <li><b>Alege pe hartă</b> și pune un pin pe decolare. Aplicația completează coordonatele, altitudinea, numele locului și direcțiile sugerate din pantă. Dacă la mai puțin de 1 km există deja o decolare în ParaglidingEarth, ți-o propune.</li>
+      <li><b>Sunt la decolare (GPS)</b> pune pinul unde ești.</li>
+      <li>Sau scrie coordonatele. Din Google Maps: ține apăsat pe decolare și copiază coordonatele afișate sus. Linkurile scurte (maps.app.goo.gl) nu conțin coordonatele.</li>
+      <li><b>Stație Holfuy</b> (opțional): numărul stației sau linkul ei. Gol = cea mai apropiată, până la 5 km.</li>
+      <li><b>Direcțiile</b>: atinge fiecare direcție (gri = nu, galben = marginal, verde = bun). Trebuie aleasă cel puțin una.</li>
+    </ul>
+  </section>
+
+  <section id="settings">
+    <h2><span class="n">8</span>Limite, ore și limbă</h2>
+    <p>Butonul <b>Setări</b>, jos.</p>
+    <div class="step">
+      <a class="shot" href="img/guide/ro/setari.webp"><img src="img/guide/ro/setari.webp" width="720" height="1750" loading="lazy" decoding="async" alt="Setările: profilurile de limite, pragurile personalizate, orele afișate, limba și ghidul"></a>
+      <ol class="marks">
+        <li><b>Limitele tale</b>: Elev / începător, Pilot sau Avansat. Toate culorile se recalculează pe loc.</li>
+        <li><b>Personalizat</b>: pragurile tale, în m/s.</li>
+        <li><b>Ore afișate</b>: implicit 08–20.</li>
+        <li><b>Limba</b>: română sau engleză.</li>
+        <li><b>Ghid de utilizare</b>: pagina aceasta.</li>
+      </ol>
+    </div>
+    <div class="tbl limits"><table>
+      <thead><tr><th></th><th>Elev / începător</th><th>Pilot</th><th>Avansat</th></tr></thead>
+      <tbody>
+        <tr><td>Vânt bun până la</td><td>4 m/s</td><td>5 m/s</td><td>7 m/s</td></tr>
+        <tr><td>Marginal până la</td><td>5 m/s</td><td>7 m/s</td><td>9 m/s</td></tr>
+        <tr><td>Rafale maxime</td><td>6 m/s</td><td>9 m/s</td><td>11 m/s</td></tr>
+        <tr><td>Rafală − vânt (turbulent) peste</td><td>3 m/s</td><td>4 m/s</td><td>5 m/s</td></tr>
+      </tbody>
+    </table></div>
+    <p>În toate profilurile: calm sub 1 m/s, ploaie peste 0,2 mm/h.</p>
+  </section>
+
+  <section id="log">
+    <h2><span class="n">9</span>Jurnalul de zbor</h2>
+    <p>O intrare înseamnă o zi de zbor la o locație, cu timpul total în aer din ziua aceea. Jurnalul stă pe telefonul tău și, dacă vrei, în Google Drive-ul tău.</p>
+    <div class="step">
+      <a class="shot" href="img/guide/ro/jurnal.webp"><img src="img/guide/ro/jurnal.webp" width="720" height="1684" loading="lazy" decoding="async" alt="Jurnalul: conectarea cu Google, totalurile, butoanele de adăugare și export și lista pe luni"></a>
+      <ol class="marks">
+        <li><b>Continuă cu Google</b> (opțional): jurnalul se păstrează în Google Drive-ul tău, ca fișier Excel, și se sincronizează pe toate dispozitivele. Aplicația vede doar fișierul ei.</li>
+        <li><b>Totalurile</b>: timp în aer, zile de zbor, locații. Sub ele, anul curent.</li>
+        <li><b>+ Adaugă zi de zbor</b>.</li>
+        <li><b>Export Excel</b> și <b>Import Excel</b>: backup-ul tău. Importul adaugă doar ce lipsește.</li>
+        <li><b>Pe zile</b>, <b>Pe locații</b> sau <b>Pe ani</b>.</li>
+        <li>Atinge o zi ca s-o modifici sau s-o ștergi.</li>
+      </ol>
+    </div>
+    <div class="step">
+      <a class="shot" href="img/guide/ro/zi.webp"><img src="img/guide/ro/zi.webp" width="720" height="916" loading="lazy" decoding="async" alt="Formularul pentru o zi de zbor: locația, data și timpul în aer"></a>
+      <ol class="marks">
+        <li><b>Locația</b>: decolările tale, locațiile din jurnal sau „Altă locație…”.</li>
+        <li><b>Data</b>. Poți alege și o zi din trecut.</li>
+        <li><b>Timpul în aer</b> din ziua aceea, în ore și minute. 80 de minute devin 1 h 20 min.</li>
+        <li><b>Salvează</b>.</li>
+      </ol>
+    </div>
+    <div class="step">
+      <a class="shot" href="img/guide/ro/ani.webp"><img src="img/guide/ro/ani.webp" width="720" height="892" loading="lazy" decoding="async" alt="Jurnalul pe ani: pentru fiecare an, zilele, locațiile, timpul în aer și o bară pe lună"></a>
+      <ol class="marks">
+        <li>Fiecare an: zilele de zbor, locațiile și timpul total în aer. Atinge un an ca să vezi zilele lui, cu filtrul „2025 ✕”; totalurile de sus arată doar anul acela.</li>
+        <li>O bară pe lună, cu aceeași scară pentru toți anii, ca să-i poți compara.</li>
+      </ol>
+    </div>
+    <h3>Backup și telefon nou</h3>
+    <ul>
+      <li><b>Cu Google</b>: pe telefonul nou deschizi Jurnalul, apeși <b>Continuă cu Google</b> și jurnalul vine din Drive. Fișierul se numește „Vânt la Decolare - jurnal de zbor.xlsx” și are aceleași foi ca exportul.</li>
+      <li><b>Fără Google</b>: <b>Export Excel</b> pe telefonul vechi, apoi <b>Import Excel</b> pe cel nou (sau <b>Importă-l</b> la prima pornire). Odată cu zilele de zbor vin și decolările, din foaia „Situri”.</li>
+      <li><b>Deconectarea</b> (apeși de două ori) șterge jurnalul de pe dispozitiv; el rămâne în Drive. Dacă ai modificări care nu au ajuns în Drive, aplicația nu te deconectează.</li>
+    </ul>
+    <p>Mai multe despre date, în <a href="confidentialitate.html">Confidențialitate</a>.</p>
+  </section>
+
+  <section id="install">
+    <h2><span class="n">10</span>Pe ecranul telefonului</h2>
+    <p>Aplicația e o pagină web. O poți pune pe ecranul principal, ca pe o aplicație, fără magazin:</p>
+    <ul>
+      <li><b>Android (Chrome)</b>: deschide <a href="./?lang=ro">paraglidingwind.com</a>, apasă meniul <kbd>⋮</kbd>, apoi <b>Adaugă pe ecranul de pornire</b> (sau <b>Instalează aplicația</b>).</li>
+      <li><b>iPhone (Safari)</b>: apasă butonul de partajare, apoi <b>Adaugă pe ecranul principal</b>.</li>
+    </ul>
+    <p>Decolările, limitele și jurnalul stau în browserul în care folosești aplicația. Dacă ștergi datele site-ului din browser, se șterg și ele, așa că păstrează un export Excel sau conectează-te cu Google. Pe iPhone, aplicația de pe ecranul principal își ține datele separat de Safari: dacă ai început în Safari, adu-ți jurnalul cu Google sau cu Import Excel.</p>
+  </section>
+
+  <section id="rules">
+    <h2><span class="n">11</span>Cum se calculează verdictul</h2>
+    <p>Pentru fiecare oră aplicația verifică regulile de mai jos; verdictul orei e cel mai rău dintre ele. Pragurile vântului și ale rafalelor vin din limitele tale (în tabel: Pilot).</p>
+    <div class="tbl rules"><table>
+      <thead><tr><th>Ce se verifică</th><th>Marginal</th><th>Nu</th></tr></thead>
+      <tbody>
+        <tr><td>Direcția vântului la 10 m (8 direcții), după direcțiile decolării</td><td class="m" data-k="Marginal:">direcție marginală; decolare fără direcții</td><td class="x" data-k="Nu:">direcție nepotrivită</td></tr>
+        <tr><td>Vântul mediu la 10 m</td><td class="m" data-k="Marginal:">peste 5 m/s</td><td class="x" data-k="Nu:">peste 7 m/s</td></tr>
+        <tr><td>Rafalele</td><td class="m" data-k="Marginal:">peste vântul mediu cu mai mult de 4 m/s (turbulent)</td><td class="x" data-k="Nu:">peste 9 m/s</td></tr>
+        <tr><td>Ploaia</td><td class="e">–</td><td class="x" data-k="Nu:">peste 0,2 mm/h</td></tr>
+        <tr><td>Vântul la ~1500 m (850 hPa)</td><td class="m" data-k="Marginal:">peste 8 m/s; sau peste 5 m/s din spatele decolării (risc de rotori)</td><td class="x" data-k="Nu:">peste 12 m/s</td></tr>
+        <tr><td>Furtuna</td><td class="e">–</td><td class="x" data-k="Nu:">prognozată la ora respectivă sau în următoarele 2 ore</td></tr>
+        <tr><td>Instabilitatea</td><td class="m" data-k="Marginal:">CAPE peste 800 J/kg și LI sub −2 (risc de supradezvoltare)</td><td class="e">–</td></tr>
+      </tbody>
+    </table></div>
+    <ul>
+      <li>Sub 1 m/s ora e <b>Calm</b>: direcția nu mai contează. Rafalele, ploaia, vântul la altitudine și furtunile se verifică în continuare.</li>
+      <li>Noaptea (după prognoza de lumină pentru fiecare oră) nu se dă verdict.</li>
+      <li>O zi e <b>Favorabil</b> (în „Pe scurt”, în punctele zilelor și în pagina decolării) doar cu cel puțin <b>2 ore favorabile la rând</b>.</li>
+      <li>Prognoza vine de la Open-Meteo și e calculată pe un caroiaj de câțiva kilometri.</li>
+    </ul>
+  </section>
+
+  <section id="faq">
+    <h2><span class="n">12</span>Întrebări frecvente</h2>
+    <details><summary>De ce două decolări apropiate au exact același vânt?</summary><div><p>Prognoza e calculată pe un caroiaj de câțiva kilometri, iar decolările din același pătrat primesc același vânt. Verdictul diferă după direcțiile fiecăreia.</p></div></details>
+    <details><summary>Vântul e slab. De ce e „Marginal” sau „Nu”?</summary><div><p>Atinge celula; motivul e în fișa orei. Des întâlnite: rafale mult peste vântul mediu (turbulent), vânt tare la altitudine sau din spatele decolării, risc de supradezvoltare, o decolare fără direcții.</p></div></details>
+    <details><summary>Cât de des se actualizează prognoza?</summary><div><p>Open-Meteo își actualizează modelele de câteva ori pe zi. Aplicația descarcă din nou prognoza când o deschizi sau revii în ea, dacă cea salvată e mai veche de 30 de minute. Cu <b>↻</b> o descarci oricând.</p></div></details>
+    <details><summary>Ce se întâmplă fără semnal?</summary><div><p>Vezi ultima prognoză descărcată, cu un mesaj sus și ora la care a fost descărcată. Zilele notate în jurnal se salvează pe telefon și ajung în Google Drive la următoarea sincronizare.</p></div></details>
+    <details><summary>Unde sunt datele mele?</summary><div><p>Pe telefonul tău, în browser. Aplicația nu are server și nu colectează nimic despre tine. Opțional, jurnalul se păstrează în Google Drive-ul tău. Detalii în <a href="confidentialitate.html">Confidențialitate</a>.</p></div></details>
+    <details><summary>De unde vin decolările și direcțiile lor?</summary><div><p>Din ParaglidingEarth (CC BY-SA), baza de date a decolărilor întreținută de piloți. Direcțiile sunt cele trecute acolo; le poți corecta din pagina decolării.</p></div></details>
+    <details><summary>Am găsit o greșeală sau am o idee.</summary><div><p>Scrie pe <a href="https://github.com/paraglidingwind/paraglidingwind.github.io/issues" target="_blank" rel="noopener">GitHub</a>.</p></div></details>
+  </section>
+
+  <footer>
+    <p>Prognoza: Open-Meteo · Decolări: ParaglidingEarth (CC BY-SA) · Vânt live: Holfuy</p>
+    <p><a href="./?lang=ro">Înapoi la aplicație</a> · <a href="confidentialitate.html">Confidențialitate</a> · <a href="termeni.html">Termeni</a> · <a href="guide.html" hreflang="en" lang="en">English</a></p>
+  </footer>
+</main>
+</body>
+</html>
