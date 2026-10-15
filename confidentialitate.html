@@ -32,7 +32,7 @@ a{color:var(--accent);font-weight:600}
 <main>
   <p><a href="./?lang=ro">← Înapoi la Vânt la Decolare</a> · <a href="privacy.html">English</a></p>
   <h1>Politica de confidențialitate</h1>
-  <p class="meta">Vânt la Decolare · actualizată la 12 octombrie 2026</p>
+  <p class="meta">Vânt la Decolare · actualizată la 15 octombrie 2026</p>
 
   <div class="box"><b>Pe scurt:</b> aplicația nu are server propriu și nu colectează date despre tine. Lista de decolări și jurnalul de zbor stau pe dispozitivul tău și, dacă te conectezi cu Google, într-un fișier din propriul tău Google Drive. Autorul aplicației nu are acces la ele.</div>
 
@@ -42,11 +42,12 @@ a{color:var(--accent);font-weight:600}
     <li><b>Dacă te conectezi cu Google</b> (opțional), aplicația primește de la Google numele și adresa de email ale contului, ca să ți le afișeze, și permisiunea de a lucra doar cu fișierele create de ea în Google Drive-ul tău (permisiunea <code>drive.file</code>). Nu vede și nu poate citi alte fișiere din Drive.</li>
     <li><b>Jurnalul sincronizat</b> se păstrează în fișierul Excel „Vânt la Decolare - jurnal de zbor.xlsx” din Google Drive-ul tău, în același format ca exportul (zile de zbor, pe locații, situri), plus o foaie ascunsă pe care aplicația o folosește la sincronizare. Îl poți deschide, descărca sau șterge oricând din Drive. Dacă ai folosit o versiune mai veche, poate exista și „Vânt la Decolare - jurnal de zbor.json”: aplicația îl citește o dată, apoi îl poți șterge.</li>
     <li><b>Locația GPS</b> e folosită doar când o ceri: la „Decolări lângă mine”, ca să arătăm decolările din jurul tău (calculul se face pe dispozitiv), și la „Sunt la decolare”, ca să pună pinul pe hartă. Nu se salvează și nu se trimite nicăieri altundeva decât serviciilor de mai jos, pentru altitudine și nume (doar la „Sunt la decolare”).</li>
+    <li><b>Sugestiile</b>, doar dacă alegi să trimiți una. Formularul „Sugestii” pregătește un email și deschide aplicația ta de email; îl trimiți tu, de pe adresa ta, la feedback@paraglidingwind.com. Autorul primește mesajul și adresa ta de email și le folosește doar ca să-ți răspundă și să îmbunătățească aplicația. Detaliile tehnice (versiunea aplicației, limba, dimensiunea ecranului, browserul) se adaugă doar dacă lași bifată opțiunea. Aplicația nu păstrează mesajul.</li>
   </ul>
 
   <h2>Ce nu face aplicația</h2>
   <ul>
-    <li>Nu are server și nu păstrează date pe calculatoarele autorului.</li>
+    <li>Nu are server și nu păstrează date pe calculatoarele autorului (în afară de sugestiile pe care alegi să i le trimiți pe email).</li>
     <li>Nu folosește reclame, cookie-uri de urmărire sau statistici de vizitare.</li>
     <li>Nu vinde și nu transmite date nimănui.</li>
   </ul>
@@ -58,6 +59,7 @@ a{color:var(--accent);font-weight:600}
     <li><b>Holfuy</b>: vântul măsurat în timp real la stații (widget).</li>
     <li><b>OpenStreetMap / Nominatim, OpenTopoMap, Esri</b>: harta și numele locurilor.</li>
     <li><b>Google</b>: autentificarea și Google Drive, doar dacă te conectezi.</li>
+    <li><b>Cloudflare</b>: domeniul paraglidingwind.com și redirecționarea emailurilor trimise la feedback@paraglidingwind.com către autor.</li>
     <li><b>GitHub Pages</b>: găzduirea paginii. <b>Google Fonts</b> și <b>cdnjs</b>: fonturile și biblioteca de hartă.</li>
   </ul>
   <p>Lista decolărilor provine de la ParaglidingEarth și e inclusă în aplicație; nu se trimite nimic către ParaglidingEarth.</p>
@@ -71,11 +73,11 @@ a{color:var(--accent);font-weight:600}
   </ul>
 
   <h2>Contact</h2>
-  <p>Întrebări sau probleme: <a href="https://github.com/paraglidingwind/paraglidingwind.github.io/issues" target="_blank" rel="noopener">github.com/paraglidingwind/paraglidingwind.github.io/issues</a>.</p>
+  <p>Din aplicație: butonul <b>Sugestii</b>, sau scrie la <a href="mailto:feedback@paraglidingwind.com">feedback@paraglidingwind.com</a>. Probleme tehnice, și pe GitHub: <a href="https://github.com/paraglidingwind/paraglidingwind.github.io/issues" target="_blank" rel="noopener">github.com/paraglidingwind/paraglidingwind.github.io/issues</a>.</p>
 
   <section class="en" lang="en">
     <h2>Privacy policy (English summary)</h2>
-    <p>Vânt la Decolare has no backend and collects no personal data. Your site list and flight log are stored in your browser. If you choose to sign in with Google, the app uses the <code>drive.file</code> scope only to create and update its own Excel file, “Vânt la Decolare - jurnal de zbor.xlsx” (same format as the export), in your own Google Drive; it cannot access any other files, and the author has no access to your data. Your Google account name and email are used only to show who is signed in. Location is used only when you tap “Sunt la decolare” to place a map pin. The app uses public services (Open-Meteo, Holfuy, OpenStreetMap/Nominatim, OpenTopoMap, Esri, Google Fonts, cdnjs, GitHub Pages) that receive your IP address and the requested coordinates. No ads, tracking or analytics. You can revoke access at myaccount.google.com/permissions and delete the Drive file at any time. Contact: github.com/paraglidingwind/paraglidingwind.github.io/issues.</p>
+    <p>Vânt la Decolare has no backend and collects no personal data. Your site list and flight log are stored in your browser. If you choose to sign in with Google, the app uses the <code>drive.file</code> scope only to create and update its own Excel file, “Vânt la Decolare - jurnal de zbor.xlsx” (same format as the export), in your own Google Drive; it cannot access any other files, and the author has no access to your data. Your Google account name and email are used only to show who is signed in. Location is used only when you tap “Sunt la decolare” to place a map pin. Feedback is sent only if you choose to: the “Sugestii” form prepares an email that you send from your own email app to feedback@paraglidingwind.com (forwarded to the author by Cloudflare); technical details are added only if you leave that option ticked, and the app keeps nothing. The app uses public services (Open-Meteo, Holfuy, OpenStreetMap/Nominatim, OpenTopoMap, Esri, Google Fonts, cdnjs, GitHub Pages, Cloudflare) that receive your IP address and the requested coordinates. No ads, tracking or analytics. You can revoke access at myaccount.google.com/permissions and delete the Drive file at any time. Contact: feedback@paraglidingwind.com or github.com/paraglidingwind/paraglidingwind.github.io/issues.</p>
   </section>
   <p class="meta" style="margin-top:28px"><a href="termeni.html">Termeni de utilizare</a></p>
 </main>
