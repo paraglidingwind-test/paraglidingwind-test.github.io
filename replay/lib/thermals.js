@@ -1,7 +1,7 @@
 // Circling + thermal detection. Mirrors ro.parapanta.skyreplay.analysis.ThermalDetector (Kotlin):
 // same defaults, same hysteresis state machine, merge, trim and filters. Index ranges are [first, last].
-import { angleDiff, Enu, vectorDir } from './geo.js?v=0d26e59';
-import { headings, times, windowMean, windowSlope, climbAltitudes } from './processing.js?v=0d26e59';
+import { angleDiff, Enu, vectorDir } from './geo.js?v=a6ebe58';
+import { headings, times, windowMean, windowSlope, climbAltitudes } from './processing.js?v=a6ebe58';
 
 export const DEFAULT_CONFIG = Object.freeze({
   windowS: 35, minTurnDeg: 300, mergeGapS: 20, minDurationS: 30, minSpeed: 1.5,

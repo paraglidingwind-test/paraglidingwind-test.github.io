@@ -6,10 +6,10 @@
 //
 // „Surse” de trasee: deocamdată doar browserul (IndexedDB). O sursă are list() → [meta], get(id) → {meta, bytes} | null,
 // put(meta, bytes), remove(id). Google Drive va fi încă o sursă în SOURCES (pasul următor), fără schimbări în pagini.
-import { parseFlight } from './lib/importer.js?v=0d26e59';
-import { prepare } from './lib/processing.js?v=0d26e59';
-import { isFit } from './lib/fit.js?v=0d26e59';
-import { distance } from './lib/geo.js?v=0d26e59';
+import { parseFlight } from './lib/importer.js?v=a6ebe58';
+import { prepare } from './lib/processing.js?v=a6ebe58';
+import { isFit } from './lib/fit.js?v=a6ebe58';
+import { distance } from './lib/geo.js?v=a6ebe58';
 
 const MAX_BYTES = 64 * 1024 * 1024, MAX_ENTRIES = 200, MAX_TOTAL = 100 * 1024 * 1024;
 const FLIGHT_EXT = /\.(fit|igc|gpx)$/i;

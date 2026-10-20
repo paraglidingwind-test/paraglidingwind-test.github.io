@@ -1,8 +1,8 @@
 // Wind from circling flight. Mirrors ro.parapanta.skyreplay.analysis.WindEstimator (Kotlin):
 // per full turn a Kasa least-squares circle fit of the ground-velocity vectors (centre = wind,
 // radius = airspeed), plausibility checks, then vector averaging per altitude band.
-import { Enu, normDeg, vectorDir } from './geo.js?v=0d26e59';
-import { DEFAULT_CONFIG, circlingSegments, cumulativeTurn, turns } from './thermals.js?v=0d26e59';
+import { Enu, normDeg, vectorDir } from './geo.js?v=a6ebe58';
+import { DEFAULT_CONFIG, circlingSegments, cumulativeTurn, turns } from './thermals.js?v=a6ebe58';
 
 /** Algebraic (Kasa) circle fit → { cx, cy, r, rms } or null. */
 export function fitCircle(x, y) {

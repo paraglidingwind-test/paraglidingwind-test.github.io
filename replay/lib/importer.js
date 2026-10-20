@@ -1,7 +1,7 @@
 // Mirrors ro.parapanta.skyreplay.io.FlightImporter: detect FIT / IGC / GPX by content (extension
 // as fallback) → Flight { points: [{t, lat, lon, alt, altBaro, vario, speed, hr}], sport, sourceName }.
-import { isFit, decode, toFlight } from './fit.js?v=0d26e59';
-import { looksLikeIgc, looksLikeGpx, parseIgc, parseGpx } from './text-parsers.js?v=0d26e59';
+import { isFit, decode, toFlight } from './fit.js?v=a6ebe58';
+import { looksLikeIgc, looksLikeGpx, parseIgc, parseGpx } from './text-parsers.js?v=a6ebe58';
 
 const utf8 = new TextDecoder('utf-8');
 

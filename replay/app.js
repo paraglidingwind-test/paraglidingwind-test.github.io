@@ -1,19 +1,19 @@
 // Reluarea 3D a unui zbor (paraglidingwind.com/replay.html). Portat din prototipul ~/Projects/skyreplay-web.
 // Logica pură e în ./lib (oglinda codului Kotlin din aplicația SkyReplay; contract: tests/replay-contract.test.mjs).
 // Traseele stau în browser (./tracks.js); pagina se deschide cu replay.html#flight=<id SkyReplay>.
-import { parseFlight } from './lib/importer.js?v=0d26e59';
-import { clean, prepare, FlightTrack } from './lib/processing.js?v=0d26e59';
-import { detectThermals } from './lib/thermals.js?v=0d26e59';
-import { estimateWind } from './lib/wind.js?v=0d26e59';
-import { bearing as geoBearing, distance, angleDiff, normDeg } from './lib/geo.js?v=0d26e59';
-import { t, LOC, translateStatic } from './i18n.js?v=0d26e59';
-import { addTrackFile, loadTrack, listTracks, removeTrack, ID_RE } from './tracks.js?v=0d26e59';
-import { clampRange, moveHandle, isWhole, quickPicks, sameRange, parseClock, stepInRange, rangeIndices, loadRange, saveRange, MIN_RANGE_MS } from './range.js?v=0d26e59';
-import { gliderMesh, headingBank, lerpAngle, gliderScale, metersPerPixel } from './glider.js?v=0d26e59';
-import { recorderSupport, recordVideo } from './recorder.js?v=0d26e59';
-import { cleanIonToken, resolveIon } from './ion.js?v=0d26e59';
-import { currentDevice } from './device.js?v=0d26e59';
-import { FORMATS, DURATIONS, SPEEDUPS, durationForSpeed, renderPlan, videoFileName } from './video.js?v=0d26e59';
+import { parseFlight } from './lib/importer.js?v=a6ebe58';
+import { clean, prepare, FlightTrack } from './lib/processing.js?v=a6ebe58';
+import { detectThermals } from './lib/thermals.js?v=a6ebe58';
+import { estimateWind } from './lib/wind.js?v=a6ebe58';
+import { bearing as geoBearing, distance, angleDiff, normDeg } from './lib/geo.js?v=a6ebe58';
+import { t, LOC, translateStatic } from './i18n.js?v=a6ebe58';
+import { addTrackFile, loadTrack, listTracks, removeTrack, ID_RE } from './tracks.js?v=a6ebe58';
+import { clampRange, moveHandle, isWhole, quickPicks, sameRange, parseClock, stepInRange, rangeIndices, loadRange, saveRange, MIN_RANGE_MS } from './range.js?v=a6ebe58';
+import { gliderMesh, headingBank, lerpAngle, gliderScale, metersPerPixel } from './glider.js?v=a6ebe58';
+import { recorderSupport, recordVideo } from './recorder.js?v=a6ebe58';
+import { cleanIonToken, resolveIon } from './ion.js?v=a6ebe58';
+import { currentDevice } from './device.js?v=a6ebe58';
+import { FORMATS, DURATIONS, SPEEDUPS, durationForSpeed, renderPlan, videoFileName } from './video.js?v=a6ebe58';
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -966,7 +966,7 @@ $('recGo').onclick = async () => {
       subtitle: `${dayFmt(r.a)} · ${clock(r.a)}–${clock(r.b)}`,
       stats: t('{d} de zbor · max {m} m', { d: fmtDur((r.b - r.a) / 1000), m: Math.round(maxAlt) }),
       attribution: IMG.which === 'ion' && map.getLayer('ion')
-        ? t('Imagini: {a} · Relief: Mapzen / AWS Terrain Tiles (SRTM: USGS; EU-DEM: Copernicus)', { a: IMG.attribution })
+        ? t('Imagini: {a} · Relief: Mapzen / AWS Terrain Tiles (SRTM: USGS; EU-DEM: Copernicus)', { a: IMG.attribution.replace(/^Imagery\s*:?\s*/i, '') })   // fără „Imagini: Imagery © …”
         : t('Imagini: Sentinel-2 cloudless 2024 de EOX IT Services GmbH (conține date Copernicus Sentinel modificate 2024), CC BY-NC-SA 4.0 · Relief: Mapzen / AWS Terrain Tiles (SRTM: USGS; EU-DEM: Copernicus)'),
       labels: {
         alt: t('ALT'), vario: 'VARIO', speed: t('VITEZĂ'), time: t('TIMP'), altitude: t('ALTITUDINE'),

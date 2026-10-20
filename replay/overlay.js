@@ -32,10 +32,9 @@ export function createOverlay(c) {
   const { w, h } = c;
   const u = Math.min(w, h) / 1080, portrait = h > w;
   const side = portrait ? 0.055 * w : 0.035 * w;
-  // 9:16: sus ~8 % și jos ~10 % le acoperă Instagram / WhatsApp; HUD-ul imediat sub zona de sus, profilul și atribuirea
-  // cât mai jos, imediat deasupra zonei de jos
-  const top = portrait ? 0.085 * h : 0.045 * h;
-  const bottom = h - (portrait ? 0.1 * h : 0.045 * h);
+  // datele de zbor lipite de marginea de sus, sursele hărții lipite de marginea de jos (alegerea pilotului)
+  const top = Math.max(16 * u, 0.015 * h);
+  const bottom = h - Math.max(14 * u, 0.012 * h);
   // ce se arde în video (sursele hărții mereu; restul după alegere)
   const show = { title: true, hud: true, profile: true, watermark: true, ...(c.show || {}) };
   const titleFrames = show.title ? 2 * c.fps : 0, fadeFrames = Math.round(c.fps * 0.5);
@@ -55,8 +54,8 @@ export function createOverlay(c) {
   bg.textBaseline = 'alphabetic';
   bg.shadowColor = 'rgba(0,0,0,0.8)'; bg.shadowBlur = 6 * u; bg.shadowOffsetY = 2 * u;
   bg.fillStyle = 'rgba(255,255,255,0.92)'; bg.font = `700 ${40 * u}px ${FONT_C}`; bg.textAlign = 'right';
-  // în 9:16 HUD-ul e pe toată lățimea, sub numele site-ului; în 16:9 și 1:1 HUD-ul e în stânga, numele în dreapta
-  const wmY = portrait && show.hud ? top + 112 * u + 46 * u : top + 40 * u;   // 9:16: sub HUD (care ia toată lățimea)
+  // numele site-ului imediat sub datele de zbor (în toate formatele); fără date de zbor, sus de tot
+  const wmY = show.hud ? top + 112 * u + 46 * u : top + 40 * u;
   if (show.watermark) {
     bg.fillText('paraglidingwind.com', w - side, wmY);
     bg.font = `600 ${20 * u}px ${FONT}`; bg.fillStyle = 'rgba(255,255,255,0.8)';

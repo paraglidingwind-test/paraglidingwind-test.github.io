@@ -1,6 +1,6 @@
 // Cleaning, trimming, derived series and time interpolation.
 // Mirrors ro.parapanta.skyreplay.analysis.FlightProcessing + FlightTrack (Kotlin).
-import { distance, bearing, normDeg, angleDiff } from './geo.js?v=0d26e59';
+import { distance, bearing, normDeg, angleDiff } from './geo.js?v=a6ebe58';
 
 export const SPIKE_SPEED_MS = 150 / 3.6;
 

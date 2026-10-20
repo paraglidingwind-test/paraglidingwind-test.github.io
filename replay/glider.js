@@ -1,7 +1,7 @@
 // Parapanta 3D (ca în aplicația SkyReplay, render/MeshBuilders.glider): voal arcuit cu celule în dungi portocaliu/galben,
 // suspante și pilotul, în metri; înainte = +Y, dreapta = +X, sus = +Z, pilotul în origine. Plus direcția și înclinarea
 // în viraj pentru fiecare punct. Logică pură, testată în tests/replay-glider.test.mjs.
-import { distance, bearing } from './lib/geo.js?v=0d26e59';
+import { distance, bearing } from './lib/geo.js?v=a6ebe58';
 
 /** Mesh pentru deck.gl SimpleMeshLayer: {attributes: {POSITION, NORMAL, COLOR_0, TEXCOORD_0}}, triunghiuri neindexate. */
 export function gliderMesh() {

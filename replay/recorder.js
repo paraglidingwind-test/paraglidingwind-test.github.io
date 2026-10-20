@@ -6,8 +6,8 @@
 // înregistrarea stă pe pauză; pentru fiecare cadru se reia exact 1/fps secunde, deci clipul are durata planificată
 // oricât de încet s-ar randa. Harta nu are nevoie de preserveDrawingBuffer: imaginea se copiază în evenimentul
 // „idle”/„render” al hărții, în același pas cu desenarea.
-import { renderPlan, bitrate, Timeline, cinematicCamera, localFrame, zoomForDistance, pickMime, mimeInfo, FPS } from './video.js?v=0d26e59';
-import { createOverlay } from './overlay.js?v=0d26e59';
+import { renderPlan, bitrate, Timeline, cinematicCamera, localFrame, zoomForDistance, pickMime, mimeInfo, FPS } from './video.js?v=a6ebe58';
+import { createOverlay } from './overlay.js?v=a6ebe58';
 
 const raf = () => new Promise((r) => requestAnimationFrame(() => r()));
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
