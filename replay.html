@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d151b">
+<meta name="robots" content="noindex">
+<title>Reluare 3D · Vânt la Decolare</title>
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow+Semi+Condensed:wght@400;500;600;700&display=swap">
+<!-- Bibliotecile hărții 3D: doar pe această pagină, versiuni fixe, verificate cu integrity. -->
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css" integrity="sha384-uTttxo/aOKbdE5RlD/SPzSDoDmNvGlUYPjONi2MN/b7c9HPSvW07OIuyP7uL6jxK" crossorigin="anonymous">
+<link rel="stylesheet" href="replay/style.css?v=0d26e59">
+<script src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js" integrity="sha384-5+cfbwT0iiub6VsQAdn6yz16nr6sDiQoHx6tm4O8OVYXHYOxcffFmCJBL0dgdvGp" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/deck.gl@9.4.0/dist.min.js" integrity="sha384-NrpHmp6N6IhXZ+gSV+uRLo+Hqprkw4BfdGzmxgWXhjakjkAabyfQxokSmn/aK0VB" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div id="map" aria-label="Hartă 3D"></div>
+
+  <!-- Bara site-ului: înapoi la jurnal, numele paginii, limba -->
+  <nav id="topbar">
+    <a class="back" href="index.html#jurnal" aria-label="Înapoi la jurnal">&#8592; <span>Jurnal</span></a>
+    <div class="ttl"><b>Reluare 3D</b><span id="flightName"></span></div>
+    <div class="lang" role="group" aria-label="Limba"><a href="?lang=ro" data-lang="ro" lang="ro" aria-label="Română">RO</a><a href="?lang=en" data-lang="en" lang="en" aria-label="English">EN</a></div>
+  </nav>
+
+  <!-- HUD -->
+  <header id="hud" hidden>
+    <div class="tile"><span class="lbl">Altitudine</span><span class="val" id="hAlt">–</span><span class="sub" id="hAgl">AGL –</span></div>
+    <div class="tile"><span class="lbl">Vario</span><span class="val" id="hVario">–</span><span class="sub">m/s</span></div>
+    <div class="tile"><span class="lbl">Viteză</span><span class="val" id="hSpd">–</span><span class="sub">km/h</span></div>
+    <div class="tile"><span class="lbl" id="hClock">–</span><span class="val" id="hElapsed">–</span><span class="sub" id="hWind" title="Vântul din spirale (de unde bate, km/h)">vânt –</span></div>
+  </header>
+  <button id="menuBtn" class="fab" aria-label="Detalii zbor" hidden>&#9776;</button>
+  <button id="helpFab" class="fab help2" aria-label="Cum se folosește" title="Cum se folosește" hidden>&#9432;</button>
+
+  <!-- Panoul de jos -->
+  <footer id="panel" hidden>
+    <div id="journalBar" hidden><span id="journalTxt"></span><a class="btn small primary" id="journalAdd" href="#">Adaugă în jurnal</a></div>
+    <!-- Selectarea unei porțiuni (ca în aplicația SkyReplay) -->
+    <div id="selPanel" hidden>
+      <div class="selHead">
+        <div class="selTxt"><span class="lbl">Selectează o porțiune</span><b id="selLabel" aria-live="polite"></b></div>
+        <button id="selCancel" class="btn small">Renunță</button>
+        <button id="selApply" class="btn small primary">Aplică</button>
+      </div>
+      <div id="picks" class="picks" role="group" aria-label="Alegeri rapide"></div>
+      <form id="customForm" class="customForm" hidden>
+        <label>De la <input id="cFrom" inputmode="numeric" autocomplete="off" placeholder="HH:MM" size="8"></label>
+        <label>Până la <input id="cTo" inputmode="numeric" autocomplete="off" placeholder="HH:MM" size="8"></label>
+        <button class="btn small" type="submit">Setează</button>
+        <span id="cErr" class="err" role="alert"></span>
+      </form>
+      <p class="hint">Trage de mânerele albe de pe profil; cu tastatura: Tab până la un mâner, apoi ← / → (Shift: câte un minut).</p>
+    </div>
+    <div id="rangeBar" class="tools">
+      <button id="selBtn" class="btn small">✂ Selectează o porțiune</button>
+      <span id="rangeChip" class="chip" hidden><button id="rangeEdit" class="chipTxt" aria-label="Schimbă porțiunea"></button><button id="rangeClear" class="chipX" aria-label="Arată tot zborul">&#10005;</button></span>
+      <button id="fitBtn" class="btn small" hidden>Încadrează</button>
+      <button id="loopBtn" class="btn small" hidden aria-pressed="true">În buclă</button>
+      <button id="recBtn" class="btn small rec"><span class="dot" aria-hidden="true"></span>Înregistrează video</button>
+    </div>
+    <div id="profileWrap">
+      <canvas id="profile" aria-label="Profilul altitudinii; trage ca să alegi momentul"></canvas>
+      <div id="hA" class="handle" role="slider" tabindex="0" aria-label="Începutul porțiunii" hidden><span class="tag"></span></div>
+      <div id="hB" class="handle" role="slider" tabindex="0" aria-label="Sfârșitul porțiunii" hidden><span class="tag"></span></div>
+    </div>
+    <div class="controls">
+      <button id="playBtn" class="btn primary" aria-label="Pornește">&#9654;</button>
+      <button id="speedBtn" class="btn" aria-label="Viteza reluării">10×</button>
+      <div class="seg" role="group" aria-label="Camera">
+        <button data-cam="chase" class="on">Din spate</button>
+        <button data-cam="follow">Urmărește</button>
+        <button data-cam="free">Liber</button>
+      </div>
+      <button id="openBtn2" class="btn" aria-label="Deschide alt traseu">&#128193;</button>
+    </div>
+  </footer>
+  <!-- Jos: rândul cu gesturile și ⓘ sursele hărții (se deschid deasupra); panoul de redare stă deasupra rândului -->
+  <div id="bottomBar">
+    <div id="credits" aria-label="Sursele hărții" hidden><button id="creditsClose" type="button" aria-label="Închide">&#215;</button></div>
+    <div id="infoLine" role="note"><span id="infoTxt"></span><button id="infoMore" type="button">Mai mult…</button><button id="creditsBtn" type="button" aria-expanded="false" aria-controls="credits" aria-label="Arată toate sursele hărții" title="Sursele hărții">&#9432;</button></div>
+  </div>
+
+  <!-- Fără zbor: alege un fișier -->
+  <section id="intro">
+    <div class="card">
+      <h1>Reluare 3D</h1>
+      <p id="introText">Vezi zborul în 3D, pe relief și imagini din satelit. Trage aici un fișier FIT, IGC sau GPX (merge și arhiva .zip din Garmin Connect), sau alege-l.</p>
+      <label class="btn primary big" for="file">Alege fișierul zborului</label>
+      <input id="file" type="file" accept=".fit,.igc,.gpx,.gz,.zip,application/octet-stream,application/zip" hidden>
+      <p class="hint">Fișierul rămâne în acest browser; nu se trimite nicăieri.</p>
+      <div id="recent" hidden><h2>Trasee în acest browser</h2><ul class="list" id="recentList"></ul></div>
+      <p id="status" role="status"></p>
+    </div>
+  </section>
+  <div id="dropHint" hidden>Lasă fișierul zborului aici</div>
+
+  <!-- Detaliile zborului -->
+  <dialog id="sheet" class="sheet">
+    <div class="sheetHead"><h2>Zborul</h2><button class="btn" id="sheetClose" aria-label="Închide">&#10005;</button></div>
+    <div id="stats" class="stats"></div>
+    <h3>Termice</h3>
+    <label class="row"><input type="checkbox" id="optThermals" checked> Arată coloanele termicelor</label>
+    <ol id="thermalList" class="list"></ol>
+    <h3>Vântul din spirale</h3>
+    <ul id="windList" class="list"></ul>
+    <h3>Imagini</h3>
+    <div class="seg wide" id="imgSeg" role="group" aria-label="Imagini">
+      <button data-img="eox" class="on">Satelit gratuit (Sentinel-2)</button>
+      <button data-img="ion">Satelit detaliat (Cesium ion)</button>
+    </div>
+    <div id="ionBox" hidden>
+      <label for="ionToken" class="lbl">Tokenul tău Cesium ion</label>
+      <input id="ionToken" type="password" autocomplete="off" spellcheck="false" autocapitalize="off" placeholder="eyJhbGciOi…">
+      <div class="acts">
+        <button class="btn small" id="ionPaste" type="button">Lipește</button>
+        <button class="btn small" id="ionClear" type="button">Șterge</button>
+        <button class="btn small primary" id="ionTest" type="button">Testează și folosește</button>
+      </div>
+      <label class="row"><input type="checkbox" id="ionRemember"> Ține minte în acest browser</label>
+      <p id="ionMsg" class="hint" role="status"></p>
+      <p class="hint">Imagini Bing Maps Aerial prin Cesium ion, cu tokenul tău gratuit de la <a href="https://ion.cesium.com/signup" target="_blank" rel="noopener">ion.cesium.com</a>; site-ul nu are niciun token. Tokenul se trimite doar la api.cesium.com și stă în acest browser doar dacă bifezi „Ține minte”.</p>
+    </div>
+    <h3>Traseu</h3>
+    <label class="row"><input type="checkbox" id="optInfo" checked> Arată indiciile de gesturi (jos)</label>
+    <label class="row"><input type="checkbox" id="optFull"> Arată tot traseul</label>
+    <p class="hint">Altfel se vede doar o fereastră în jurul parapantei: urma din spate, care se șterge treptat, și traseul care urmează, ca o fantomă tot mai ștearsă.</p>
+    <div id="trailBox">
+      <label class="row trailRow" for="optTrail"><span>Lungimea urmei</span><b id="trailVal"></b></label>
+      <input type="range" id="optTrail" min="1" max="15" step="1" value="4" aria-label="Lungimea urmei (minute)">
+      <label class="row trailRow" for="optAhead"><span>Traseul înainte (fantomă)</span><b id="aheadVal"></b></label>
+      <input type="range" id="optAhead" min="0" max="10" step="1" value="2" aria-label="Traseul înainte, în minute (0 = oprit)">
+    </div>
+    <label class="row"><input type="checkbox" id="optSnap" checked> Aliniază traseul cu relieful la decolare</label>
+    <p class="hint" id="snapInfo"></p>
+    <div class="acts">
+      <button class="btn" id="openBtn">Deschide alt traseu…</button>
+      <button class="btn danger" id="delBtn">Șterge traseul din acest browser</button>
+    </div>
+    <h3>Trasee în acest browser</h3>
+    <ul id="sheetTracks" class="list"></ul>
+    <p class="hint">Imagini: Sentinel-2 cloudless (EOX) sau Bing prin Cesium ion. Relief: AWS Terrain Tiles. Analiza zborului e aceeași ca în aplicația SkyReplay.</p>
+  </dialog>
+
+  <!-- Cum se folosește -->
+  <dialog id="help" class="sheet">
+    <div class="sheetHead"><h2>Cum se folosește</h2><button class="btn" id="helpClose" aria-label="Închide">&#10005;</button></div>
+    <h3>Zborul</h3>
+    <ul class="help">
+      <li>Alege fișierul zborului (FIT, IGC, GPX sau arhiva .zip din Garmin Connect) ori trage-l pe pagină.</li>
+      <li>„Adaugă în jurnal” leagă traseul de ziua de zbor din Jurnal; de acolo îl redeschizi cu un clic.</li>
+    </ul>
+    <h3>Redare</h3>
+    <ul class="help">
+      <li>▶ pornește sau oprește; butonul cu viteza (10×) o schimbă.</li>
+      <li>Trage pe profilul altitudinii ca să sari la orice moment.</li>
+      <li>Tastatură: Spațiu pornește / oprește, ← și → sar înapoi / înainte.</li>
+    </ul>
+    <h3>Camera</h3>
+    <ul class="help">
+      <li>Din spate: camera stă în spatele parapantei. Urmărește: parapanta rămâne în centru, harta nu se rotește. Liber: muți harta cum vrei.</li>
+      <li>Când tragi de hartă, camera trece pe Liber; apasă Din spate sau Urmărește ca să revii.</li>
+    </ul>
+    <h3>Gesturi</h3>
+    <div id="gestures">
+      <details data-dev="touch">
+        <summary>Telefon sau tabletă (Android, iPhone, iPad)</summary>
+        <ul class="help">
+          <li>Un deget: mută harta.</li>
+          <li>Două degete: ciupește pentru zoom; rotește-le ca să rotești harta.</li>
+          <li>Două degete trase împreună în sus sau în jos: înclină vederea.</li>
+          <li>Atinge de două ori: apropie.</li>
+        </ul>
+      </details>
+      <details data-dev="mac">
+        <summary>Mac (touchpad sau mouse)</summary>
+        <ul class="help">
+          <li>Touchpad: două degete mută harta, ciupirea face zoom.</li>
+          <li>Shift + două degete: rotește. ⌥ (Option) + două degete în sus sau în jos: înclină.</li>
+          <li>Mouse: trage ca să muți, rotița face zoom, Ctrl + trage (sau click dreapta + trage) rotește și înclină.</li>
+        </ul>
+      </details>
+      <details data-dev="pc">
+        <summary>Windows sau Linux (mouse sau touchpad)</summary>
+        <ul class="help">
+          <li>Mouse: trage ca să muți, rotița face zoom, click dreapta + trage (sau Ctrl + trage) rotește și înclină.</li>
+          <li>Touchpad (Chrome, Edge): două degete mută harta, ciupirea face zoom, Shift + două degete rotește, Alt + două degete înclină.</li>
+        </ul>
+      </details>
+    </div>
+    <h3>Culori</h3>
+    <div class="legend" aria-hidden="true"><span>−4</span><i></i><span>+5 m/s</span></div>
+    <ul class="help">
+      <li>Traseul apare pe măsură ce zbori: în spate urma ultimelor minute, în față, mai șters, traseul care urmează („fantoma”). În meniul ☰ alegi lungimile lor sau „Arată tot traseul”.</li>
+      <li>Traseul și profilul sunt colorate după vario: albastru coboară, alb ≈ 0, verde urcă, galben → roșu urcare puternică.</li>
+      <li>Coloanele verticale sunt termicele găsite: culoarea arată urcarea medie, eticheta urcarea și înălțimea câștigată. Pe profil, termicele sunt benzi verzi.</li>
+      <li>Vântul (în HUD, sub ceas) e estimat din deriva spiralelor: de unde bate și cât de tare.</li>
+    </ul>
+    <h3>O porțiune din zbor</h3>
+    <ul class="help">
+      <li>„Selectează o porțiune”: trage cele două mânere albe de pe profil sau alege o termică, ultimele minute ori „De la – până la”, apoi Aplică.</li>
+      <li>Redarea rămâne în porțiune (în buclă sau cu oprire la final), restul zborului nu se mai desenează, iar „Încadrează” arată toată porțiunea. Porțiunea se ține minte pentru fiecare zbor.</li>
+    </ul>
+    <h3>Video</h3>
+    <ul class="help">
+      <li>„Înregistrează video” face un clip din porțiune sau din tot zborul: alegi formatul (9:16, 16:9, 1:1), durata și camera. Clipul are titlu, HUD, profil și atribuirea hărții; apoi Descarcă sau Distribuie.</li>
+      <li>Ține pagina deschisă și vizibilă cât se înregistrează; durează cam cât clipul sau mai mult.</li>
+    </ul>
+    <h3>Confidențialitate</h3>
+    <p class="hint">Fișierele și videoclipurile rămân în acest browser; nu se trimit nicăieri. Doar imaginile hărții și relieful se descarcă de la furnizorii lor.</p>
+    <h3>Imagini detaliate</h3>
+    <p class="hint">În meniul ☰ poți alege „Satelit detaliat (Cesium ion)”: fiecare vizitator își folosește propriul token gratuit de la ion.cesium.com (site-ul nu are și nu publică niciun token). Tokenul pleacă doar spre api.cesium.com.</p>
+  </dialog>
+
+  <!-- Înregistrează video -->
+  <dialog id="recSheet" class="sheet">
+    <div class="sheetHead"><h2>Înregistrează video</h2><button class="btn" id="recClose" aria-label="Închide">&#10005;</button></div>
+    <div id="recWhatBox">
+      <h3>Ce</h3>
+      <div class="seg wide" id="recWhat" role="group" aria-label="Ce se înregistrează">
+        <button data-what="part" class="on">Porțiunea</button>
+        <button data-what="all">Tot zborul</button>
+      </div>
+    </div>
+    <h3>Format</h3>
+    <div class="seg wide" id="recFmt" role="group" aria-label="Format">
+      <button data-fmt="9:16" class="on">9:16 · Stories</button>
+      <button data-fmt="16:9">16:9 · YouTube</button>
+      <button data-fmt="1:1">1:1 · Feed</button>
+    </div>
+    <h3>Durată</h3>
+    <select id="recLen" class="sel" aria-label="Durată"></select>
+    <p class="hint" id="recSpan"></p>
+    <h3>Camera</h3>
+    <div class="seg wide" id="recCam" role="group" aria-label="Camera videoclipului">
+      <button data-rcam="cine" class="on">Cinematică automată</button>
+      <button data-rcam="current">Camera actuală</button>
+    </div>
+    <p class="hint" id="recCamHint"></p>
+    <h3>Pe video</h3>
+    <label class="row"><input type="checkbox" id="show_title" checked> Titlu la început</label>
+    <label class="row"><input type="checkbox" id="show_hud" checked> Date de zbor (altitudine, vario, viteză, timp)</label>
+    <label class="row"><input type="checkbox" id="show_profile" checked> Profil de altitudine</label>
+    <label class="row"><input type="checkbox" id="show_watermark" checked> paraglidingwind.com</label>
+    <label class="row"><input type="checkbox" checked disabled> Sursele hărții (mereu: o cere licența imaginilor și a reliefului)</label>
+    <p class="hint" id="recInfo"></p>
+    <div class="acts end">
+      <button class="btn" id="recCancel">Renunță</button>
+      <button class="btn primary rec" id="recGo"><span class="dot" aria-hidden="true"></span>Înregistrează</button>
+    </div>
+  </dialog>
+
+  <!-- Înregistrarea în curs / gata -->
+  <section id="recProg" hidden role="dialog" aria-modal="true" aria-label="Înregistrare video">
+    <div class="recCard">
+      <div class="recPrev" id="recPrev"></div>
+      <div id="recRun">
+        <div class="bar"><i id="recBar"></i></div>
+        <p id="recTxt" role="status"></p>
+        <p class="hint">Ține pagina deschisă și vizibilă; nimic nu se trimite pe internet.</p>
+        <div class="acts end"><button class="btn" id="recStop">Renunță</button></div>
+      </div>
+      <div id="recDone" hidden>
+        <p><b>Video gata</b><br><span id="recResult" class="hint"></span></p>
+        <div class="acts end">
+          <button class="btn" id="recNew">Închide</button>
+          <button class="btn" id="recShare" hidden>Distribuie</button>
+          <a class="btn primary" id="recDl" href="#" download>Descarcă</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script type="module" src="replay/app.js?v=0d26e59"></script>
+</body>
+</html>

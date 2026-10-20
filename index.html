@@ -211,6 +211,16 @@ button.row{width:100%;border:0;border-bottom:1px solid var(--line);background:no
 .pin{color:var(--accent);filter:drop-shadow(0 1px 2px rgb(0 0 0 / .4))}
 #mapInfo{margin-top:8px;color:var(--ink)}
 #mapInfo button{margin-top:6px}
+/* Jurnal: ziua cu traseele ei (reluarea 3D) */
+.lday{border-bottom:1px solid var(--line)}
+.lday:last-child{border-bottom:0}
+.list .lday button.row{border-bottom:0}
+.lday .trk{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:-10px;padding:0 10px 4px}
+.lday .trk button{min-height:36px;padding:0;border:0;background:none;color:var(--accent);font-weight:600;font-size:14px}
+.lday .trk button.sec{color:var(--muted);font-weight:500}
+.lday.drop{background:var(--sunk);box-shadow:inset 0 0 0 2px var(--accent)}
+.tlist{display:flex;flex-direction:column;gap:8px;margin:8px 0}
+.tlist a{justify-content:space-between}
 .sync{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-bottom:14px;padding:12px;border-radius:12px;background:var(--sunk)}
 .sync p{margin:0;flex:1 1 220px;font-size:13.5px;color:var(--muted)}
 .sync p b{color:var(--ink)}
@@ -303,6 +313,7 @@ details.custom summary{min-height:44px;display:flex;align-items:center;font-weig
 /* Doar tabla se micșorează când ecranul e scund; restul își păstrează înălțimea (altfel banda de zile se taie). */
 .top,.banner,.days,.viewbar,.legend{flex:0 0 auto}
 .seg2.lang{display:inline-flex}
+.seg2.units button{flex:1 1 0;min-width:0}
 .viewbar .chipb{min-height:44px}
 .board.summary{margin:0 16px;border:1px solid var(--line);border-radius:12px;padding:4px 0}
 .sumhead,.sumrow{display:grid;grid-template-columns:118px 1fr;gap:10px;align-items:center;padding:8px 12px}
@@ -327,7 +338,7 @@ details.hfbox .hf-in{padding:0 12px 12px}
 </style>
 </head>
 <body>
-<div style="height:20px;display:flex;align-items:center;justify-content:center;background:#6d28d9;color:#fff;font:700 11px/1 system-ui,sans-serif;letter-spacing:.05em">TEST · ui-r2 ab90a23</div>
+<div style="height:20px;display:flex;align-items:center;justify-content:center;background:#6d28d9;color:#fff;font:700 11px/1 system-ui,sans-serif;letter-spacing:.05em">TEST · feat/skyreplay-web 9e85d7e</div>
 <style>.app{height:calc(100% - 20px)}</style>
 <div class="app">
   <div class="top">
@@ -403,6 +414,11 @@ details.hfbox .hf-in{padding:0 12px 12px}
   </div>
 </div></dialog>
 
+<dialog id="dlgTrack"><div class="sheet">
+  <header><h2 id="trTitle">Traseu</h2><button class="iconbtn" data-close aria-label="Închide"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></header>
+  <div class="body" id="trBody"></div>
+</div></dialog>
+
 <dialog id="dlgEdit"><div class="sheet">
   <header><h2>Situri</h2><button class="iconbtn" data-close aria-label="Închide"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></header>
   <div class="body">
@@ -449,9 +465,9 @@ details.hfbox .hf-in{padding:0 12px 12px}
   <div class="body">
     <h3>Limitele tale</h3>
     <div class="profiles" id="profiles"></div>
-    <details class="custom" id="customBox"><summary>Personalizat (pragurile în m/s)</summary>
+    <details class="custom" id="customBox"><summary id="customSum">Personalizat (pragurile de vânt în m/s)</summary>
       <div class="three">
-        <div><label class="f" for="sGood">Bun până la (m/s)</label><input class="in" id="sGood" type="number" step="0.5" inputmode="decimal"></div>
+        <div><label class="f" for="sGood">Bun până la</label><input class="in" id="sGood" type="number" step="0.5" inputmode="decimal"></div>
         <div><label class="f" for="sMarg">Marginal până la</label><input class="in" id="sMarg" type="number" step="0.5" inputmode="decimal"></div>
         <div><label class="f" for="sCalm">Calm sub</label><input class="in" id="sCalm" type="number" step="0.5" inputmode="decimal"></div>
         <div><label class="f" for="sGust">Rafale maxime</label><input class="in" id="sGust" type="number" step="0.5" inputmode="decimal"></div>
@@ -465,6 +481,9 @@ details.hfbox .hf-in{padding:0 12px 12px}
       <div><label class="f" for="sFrom">De la ora</label><input class="in" id="sFrom" type="number" min="0" max="23" inputmode="numeric"></div>
       <div><label class="f" for="sTo">Până la ora</label><input class="in" id="sTo" type="number" min="0" max="23" inputmode="numeric"></div>
     </div>
+    <h3>Unitatea vântului</h3>
+    <span class="seg2 units" role="group" aria-label="Unitatea vântului" id="unitSeg"><button type="button" data-unit="ms" aria-pressed="true">m/s</button><button type="button" data-unit="kmh" aria-pressed="false">km/h</button><button type="button" data-unit="kt" aria-pressed="false" aria-label="Noduri">kt</button><button type="button" data-unit="mph" aria-pressed="false">mph</button></span>
+    <p class="hint">Doar afișarea se schimbă: limitele rămân aceleași.</p>
     <h3>Modelul meteo</h3>
     <div class="profiles" id="models"></div>
     <p class="hint">Modelele dau cifre puțin diferite. Când diferă mult între ele, prognoza e nesigură.</p>
@@ -487,7 +506,7 @@ details.hfbox .hf-in{padding:0 12px 12px}
     <ul class="helplist">
       <li>Pictograma de sus: cerul și tipul de nori.</li>
       <li>Săgeata: încotro bate vântul.</li>
-      <li>Cifra mare: vântul la 10 m (m/s). Cifra mică: rafalele.</li>
+      <li>Cifra mare: vântul la 10 m, în unitatea aleasă în Setări (implicit m/s). Cifra mică: rafalele.</li>
       <li>Culoarea: verdictul, după direcțiile decolării și limitele tale.</li>
       <li>Colțul marcat: o avertizare (vânt tare la altitudine, furtună, decolare fără direcții). Atinge celula ca să vezi motivul.</li>
       <li>Orele estompate: noapte, sau ore deja trecute azi.</li>
@@ -506,7 +525,7 @@ details.hfbox .hf-in{padding:0 12px 12px}
       <label class="f">Despre ce e vorba</label>
       <span class="seg2" role="group" aria-label="Despre ce e vorba" id="ideaKind"><button type="button" data-kind="idee" aria-pressed="true">Idee</button><button type="button" data-kind="problema" aria-pressed="false">Problemă</button><button type="button" data-kind="altceva" aria-pressed="false">Altceva</button></span>
       <label class="f" for="ideaText">Mesajul tău</label>
-      <textarea class="in" id="ideaText" rows="6" maxlength="1500" placeholder="De exemplu: aș vrea vântul și în km/h."></textarea>
+      <textarea class="in" id="ideaText" rows="6" maxlength="1500" placeholder="De exemplu: lipsește o decolare din zona mea."></textarea>
       <label class="f" for="ideaReply">Emailul tău (opțional)</label>
       <input class="in" id="ideaReply" type="email" inputmode="email" autocomplete="email" maxlength="200" placeholder="nume@exemplu.ro">
       <p class="hint">Doar dacă vrei un răspuns.</p>
@@ -535,13 +554,14 @@ details.hfbox .hf-in{padding:0 12px 12px}
   <div class="foot" id="pickFoot"></div>
 </div></dialog>
 
+<input type="file" id="trackFile" accept=".fit,.igc,.gpx,.gz,.zip,application/octet-stream,application/zip" hidden>
 <input type="file" id="importFile" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden>
 <div class="toast" id="toast" hidden></div>
 
 <script>
 /* ---------- limbă ----------
    Româna e sursa; EN = dicționarul română → engleză (data/i18n_en.json). Limba: ?lang=, apoi alegerea salvată, apoi limba telefonului. */
-const EN = {"Vânt la Decolare":"Paragliding Wind","Se încarcă prognoza…":"Loading forecast…","Reîmprospătează prognoza":"Refresh forecast","Jurnal de zbor":"Flight log","Editează lista de situri":"Edit site list","Alege ziua":"Pick the day","Bun":"Good","Marginal":"Marginal","Nu":"No","Calm":"Calm","Pictograma: cerul și tipul de nori · săgeata: încotro bate vântul · cifra mare: vânt la 10 m, mică: rafale (m/s)":"Icon: sky and cloud type · arrow: where the wind blows to · big number: wind at 10 m, small: gusts (m/s)","Confidențialitate":"Privacy","Închide":"Close","Locație":"Site","Numele locației":"Site name","Data":"Date","Poți alege și o zi din trecut, pentru zborurile mai vechi.":"You can pick a past day to log older flights.","Timp în aer în ziua respectivă":"Airtime that day","Ore":"Hours","Minute":"Minutes","ore":"hours","minute":"minutes","Salvează":"Save","Șterge":"Delete","Zi de zbor":"Flying day","Editează ziua de zbor":"Edit flying day","Altă locație…":"Other site…","Situri și setări":"Sites & settings","Lista ta":"Your list","Apasă din nou pentru confirmare":"Tap again to confirm","Toate siturile din România":"All sites in Romania","De pe ParaglidingEarth, ordonate după distanța față de siturile tale. Apasă + ca să adaugi.":"From ParaglidingEarth, sorted by distance from your sites. Tap + to add.","Caută un sit din România (ex: Bunloc)":"Search a site in Romania (e.g. Bunloc)","Pune un pin pe hartă: completez coordonatele, altitudinea, numele și direcțiile sugerate din panta terenului. Poți corecta orice câmp, sau le poți scrie de mână.":"Drop a pin on the map and the coordinates, altitude, name and directions suggested by the slope are filled in. You can correct any field, or type them by hand.","Alege pe hartă":"Pick on the map","Sunt la decolare (GPS)":"I'm at the takeoff (GPS)","Hartă: atinge ca să pui pinul decolării":"Map: tap to drop the takeoff pin","Nume":"Name","ex: Făureni":"e.g. Făureni","Coordonate decolare sau link Google Maps":"Takeoff coordinates or Google Maps link","În Google Maps ține apăsat pe decolare, apoi copiază coordonatele afișate sus.":"In Google Maps, long-press the takeoff, then copy the coordinates shown at the top.","Altitudine decolare (m)":"Takeoff altitude (m)","Stație Holfuy (opțional)":"Holfuy station (optional)","ex: 774 sau holfuy.com/en/weather/774":"e.g. 774 or holfuy.com/en/weather/774","Dacă lași gol, se alege automat stația cea mai apropiată, la cel mult 5 km.":"Leave empty to use the nearest station within 5 km.","Direcții bune de vânt (apasă: gri = nu, galben = marginal, verde = bun)":"Good wind directions (tap: grey = no, yellow = marginal, green = good)","Adaugă situl":"Add site","Bun până la (m/s)":"Good up to (m/s)","Marginal până la":"Marginal up to","Calm sub":"Calm below","Rafale maxime":"Max gusts","Rafală − vânt peste":"Gust − wind above","Ploaie peste (mm/h)":"Rain above (mm/h)","De la ora":"From hour","Până la ora":"To hour","Bun de zbor":"Flyable","Nu e de zbor":"Not flyable","Calm (fără vânt)":"Calm (no wind)","Fără date":"No data","Vânt slab ({v} m/s), direcția nu contează":"Light wind ({v} m/s), direction doesn't matter","Direcție bună ({d})":"Good direction ({d})","Direcție marginală ({d})":"Marginal direction ({d})","Direcție nepotrivită ({d}) pentru decolare":"Wrong direction ({d}) for this takeoff","Vânt prea tare: {v} m/s (peste {lim})":"Too strong: {v} m/s (above {lim})","Vânt tare: {v} m/s (peste {lim})":"Strong wind: {v} m/s (above {lim})","Rafale {v} m/s (peste {lim})":"Gusts {v} m/s (above {lim})","Turbulent: rafalele depășesc vântul cu {v} m/s":"Turbulent: gusts exceed the wind by {v} m/s","Ploaie {v} mm/h":"Rain {v} mm/h","Senin":"Clear","Predominant senin":"Mostly clear","Parțial noros":"Partly cloudy","Mai mult noros":"Mostly cloudy","Înnorat":"Overcast","Ceață":"Fog","Ceață cu chiciură":"Freezing fog","Burniță slabă":"Light drizzle","Burniță":"Drizzle","Burniță densă":"Dense drizzle","Burniță înghețată":"Freezing drizzle","Ploaie slabă":"Light rain","Ploaie":"Rain","Ploaie puternică":"Heavy rain","Ploaie înghețată":"Freezing rain","Ninsoare slabă":"Light snow","Ninsoare":"Snow","Ninsoare puternică":"Heavy snow","Grăunțe de zăpadă":"Snow grains","Averse slabe":"Light showers","Averse":"Showers","Averse violente":"Violent showers","Averse de ninsoare":"Snow showers","Furtună":"Thunderstorm","Furtună cu grindină":"Thunderstorm with hail","Necunoscut":"Unknown","Nori de convecție: semn de termice.":"Convective clouds: a sign of thermals.","Dezvoltare verticală puternică: risc de supradezvoltare și averse.":"Strong vertical development: risk of overdevelopment and showers.","Nor de furtună: nu se zboară.":"Thunderstorm cloud: no flying.","Strat de nori joși: termice slabe.":"Layer of low clouds: weak thermals.","Plafon jos și uniform.":"Low, uniform cloud base.","Nori la altitudine medie.":"Mid-level clouds.","Strat la altitudine medie: umbrește solul, termice slabe.":"Mid-level layer: shades the ground, weak thermals.","Nori înalți subțiri: adesea anunță un front.":"Thin high clouds: often ahead of a front.","Văl înalt: slăbește termicele.":"High veil: weakens thermals.","Ești offline.":"You are offline.","Eroare de rețea.":"Network error.","Azi":"Today","Mâine":"Tomorrow","Se descarcă prognoza…":"Downloading forecast…","Actualizat {t} · Open-Meteo":"Updated {t} · Open-Meteo","Fără prognoză încă":"No forecast yet","Nu am putut descărca prognoza. {e}":"Couldn't download the forecast. {e}"," Arăt datele de la {t}.":" Showing data from {t}."," Apasă ↻ pentru a încerca din nou.":" Tap ↻ to try again.","Lista e goală. Adaugă decolările la care zbori ca să le vezi vântul pe ore.":"Your list is empty. Add the takeoffs you fly to see their hourly wind.","Adaugă situri":"Add sites","Se descarcă prognoza pentru {n} situri…":"Downloading the forecast for {n} sites…","Nu există încă date. Apasă ↻.":"No data yet. Tap ↻.","{n} ora {h}: {st}, {d} {v} metri pe secundă, {sky}":"{n} at {h}:00: {st}, {d} {v} metres per second, {sky}","acum":"just now","acum {m} min":"{m} min ago","Cer":"Sky","Vânt la 10 m":"Wind at 10 m","Rafale":"Gusts","Vânt la ~1500 m":"Wind at ~1500 m","Nori":"Clouds","Temperatură":"Temperature","Decolare":"Takeoff","{v} m/s din {d}":"{v} m/s from {d}","(jos {lo} · mediu {mi} · sus {hi})":"(low {lo} · mid {mi} · high {hi})","ora {h}":"{h}:00","vânt din {d} {r} m/s":"wind from {d} {r} m/s","1 oră":"1 hour","{n} ore":"{n} hours","Cel mult marginal: {s} · {w}":"Marginal at best: {s} · {w}","Altitudine necunoscută":"Unknown altitude","Direcții bune: {d}":"Good directions: {d}","Marginal: {d}":"Marginal: {d}","✓ Am zburat aici":"✓ I flew here","Următoarele zile":"Next days","Fiecare pătrățel e o oră, de la {a} la {b}. Atinge o zi ca s-o vezi în tabel.":"Each square is one hour, from {a} to {b}. Tap a day to open it in the table.","la decolare":"at the takeoff","la {km} km":"{km} km away","Acum · stația Holfuy {n}":"Now · Holfuy station {n}","Istoric ↗":"History ↗",". Vânt măsurat în timp real; zonele colorate de pe cadran sunt setate de administratorul stației.":". Wind measured in real time; the coloured zones on the dial are set by the station owner.","Vântul acum la {n}":"Current wind at {n}","Stația {id}":"Station {id}","Hartă":"Map","Mută {n} mai sus":"Move {n} up","Mută {n} mai jos":"Move {n} down","Șterge {n}":"Delete {n}","Niciun sit în listă.":"No sites in your list.","{km} km de {n}":"{km} km from {n}","Adaugă {n}":"Add {n}","Niciun rezultat. Îl poți adăuga manual mai jos.":"No results. You can add it manually below.","Arată mai puține":"Show fewer","Arată toate cele {n} situri":"Show all {n} sites","vântul<br>bate din":"wind<br>from","nu":"no","marginal":"marginal","bun":"good","{n} a fost șters":"{n} removed","{n} a fost adăugat":"{n} added","Scrie un nume pentru sit.":"Enter a name for the site.","Linkurile scurte Google Maps nu conțin coordonatele. Deschide linkul, ține apăsat pe decolare și copiază coordonatele.":"Short Google Maps links don't contain the coordinates. Open the link, long-press the takeoff and copy the coordinates.","Coordonatele nu sunt valide. Exemplu: 46.6129, 23.4350":"These coordinates aren't valid. Example: 46.6129, 23.4350","Alege cel puțin o direcție bună de vânt.":"Pick at least one good wind direction.","1 zi":"1 day","{n} zile":"{n} days","în aer":"airtime","zi de zbor":"flying day","zile de zbor":"flying days","locație":"site","locații":"sites","În {y}: {d} în {z}.":"In {y}: {d} over {z}.","+ Adaugă zi de zbor":"+ Add flying day","Exportul e și backup: păstrează fișierul și încarcă-l cu „Import Excel” după ce schimbi telefonul. Se adaugă doar ce lipsește.":"The export is also a backup: keep the file and load it with “Import Excel” after changing phones. Only missing entries are added.","Pe zile":"By day","Pe locații":"By site","Încă nu ai nimic notat. Apasă „Adaugă zi de zbor”, sau „Am zburat aici” din pagina unei locații. Poți trece și zborurile mai vechi.":"Nothing logged yet. Tap “Add flying day”, or “I flew here” on a site's page. You can also log older flights.","Arată toate locațiile":"Show all sites","· {d} în {z}":"· {d} over {z}","Locații":"Sites","Atinge o locație ca să vezi zilele de acolo.":"Tap a site to see its days.","{z} · ultima: {d}":"{z} · last: {d}","Alege sau scrie locația.":"Pick or type the site.","Alege data.":"Pick the date.","Data nu poate fi în viitor.":"The date can't be in the future.","Orele și minutele nu pot fi negative.":"Hours and minutes can't be negative.","Scrie cât timp ai stat în aer.":"Enter your airtime.","Modificat":"Updated","Salvat: {s}, {d}":"Saved: {s}, {d}","Apasă din nou pentru ștergere":"Tap again to delete","Șters":"Deleted","Zile de zbor":"Flying days","Situri":"Sites","Timp în aer":"Airtime","Ultima zi":"Last day","Latitudine":"Latitude","Longitudine":"Longitude","Altitudine":"Altitude","Direcții bune":"Good directions","fără":"none","jurnal-zbor":"flight-log","Nimic nou: totul exista deja.":"Nothing new: everything was already there.","Am adăugat {x}.":"Added {x}."," și ":" and ","1 zi de zbor":"1 flying day","{n} zile de zbor":"{n} flying days","1 sit":"1 site","{n} situri":"{n} sites","Nu am putut citi fișierul. Alege un fișier exportat din jurnal.":"Couldn't read the file. Choose a file exported from the log.","Fișierul nu conține zile de zbor.":"The file contains no flying days.","Fișierul Excel a fost descărcat":"Excel file downloaded","Conectarea la Google a expirat sau a fost anulată.":"The Google sign-in expired or was cancelled.","Sincronizarea nu a reușit. Verifică internetul și încearcă din nou.":"Sync failed. Check your connection and try again.","Jurnalul pe toate dispozitivele.":"Your log on every device.","Detalii":"Details","Continuă cu Google":"Continue with Google","Sincronizez cu Drive-ul…":"Syncing with Drive…","Modificări încă nesincronizate.":"Changes not synced yet.","Sincronizat în Google Drive {t}.":"Synced to Google Drive {t}.","Sincronizează acum":"Sync now","Sincronizează":"Sync","Apasă din nou: jurnalul rămâne în Drive și se șterge de pe acest dispozitiv":"Tap again: the log stays in Drive and is removed from this device","Deconectează-te":"Sign out","Te-ai deconectat. Jurnalul e în siguranță în Drive.":"Signed out. Your log is safe in Drive.","Harta nu s-a putut încărca. Verifică internetul sau completează câmpurile de mână.":"The map couldn't load. Check your connection or fill in the fields by hand.","Relief":"Terrain","Satelit":"Satellite","Imagini © Esri":"Imagery © Esri","Caut altitudinea și numele locului…":"Looking up the altitude and place name…","Altitudine {a} m":"Altitude {a} m","panta ({s}°) coboară spre {d}: am marcat {d} bun și {a}, {b} marginal":"the slope ({s}°) faces {d}: marked {d} good and {a}, {b} marginal","teren aproape plat: alege direcțiile de mână":"nearly flat ground: pick the directions by hand","nu am găsit altitudinea, complet-o de mână":"couldn't find the altitude, enter it by hand","nume: {n}":"name: {n}","Aproape ({m} m) există deja „{n}” pe ParaglidingEarth, cu direcțiile stabilite de piloți.":"“{n}” is already on ParaglidingEarth nearby ({m} m), with directions set by pilots.","Adaugă „{n}”":"Add “{n}”","Telefonul nu oferă localizare în acest browser.":"Location isn't available in this browser.","Caut poziția GPS…":"Getting your GPS position…","Ai refuzat accesul la locație. Îl poți permite din setările browserului.":"Location access was denied. You can allow it in the browser settings.","Nu am putut afla poziția. Încearcă din nou sau pune pinul pe hartă.":"Couldn't get your position. Try again or drop the pin on the map.","Am adus datele de pe adresa veche.":"Your data was brought over from the old address.","Termeni":"Terms","Caută o decolare (ex: Bunloc)":"Search a takeoff (e.g. Bunloc)","Se încarcă lista de decolări…":"Loading the takeoff list…","Lista de decolări nu s-a putut încărca. Verifică internetul.":"The takeoff list couldn't load. Check your connection.","{km} km de tine":"{km} km from you","Arată mai multe ({n} rămase)":"Show more ({n} left)","Adaugă în listă":"Add to my list","Ordonate după distanța față de tine. Sursa: ParaglidingEarth. Apasă + ca să adaugi.":"Sorted by distance from you. Source: ParaglidingEarth. Tap + to add.","Ordonate după distanța față de siturile tale. Sursa: ParaglidingEarth. Apasă + ca să adaugi.":"Sorted by distance from your sites. Source: ParaglidingEarth. Tap + to add.","Ordonate aproximativ după zona ta (fusul orar al telefonului). Apasă „Lângă mine” pentru ordonare exactă. Sursa: ParaglidingEarth.":"Roughly sorted by your region (your phone's time zone). Tap “Near me” for exact sorting. Source: ParaglidingEarth.","Sursa: ParaglidingEarth. Caută după nume sau apasă „Lângă mine”.":"Source: ParaglidingEarth. Search by name or tap “Near me”.","Găsește decolări lângă mine":"Find takeoffs near me","{n} e deja în listă":"{n} is already in your list","Mărește harta ca să vezi decolările de pe ParaglidingEarth.":"Zoom in to see the takeoffs from ParaglidingEarth.","Noapte: fără lumină de zbor":"Night: no flying light","Decolarea nu are direcții setate: verifică dacă vântul din {d} e bun aici":"This takeoff has no wind directions set: check whether wind from {d} works here","Vânt foarte tare la ~1500 m: {v} m/s (peste {lim})":"Very strong wind at ~1500 m: {v} m/s (over {lim})","Vânt tare la ~1500 m: {v} m/s (peste {lim})":"Strong wind at ~1500 m: {v} m/s (over {lim})","Vânt la ~1500 m din spatele decolării ({d}, {v} m/s): risc de rotori":"Wind at ~1500 m from behind the takeoff ({d}, {v} m/s): rotor risk","Furtună prognozată la această oră":"Thunderstorm forecast at this hour","Furtună prognozată în ora următoare":"Thunderstorm forecast within the next hour","Furtună prognozată peste {n} ore":"Thunderstorm forecast in {n} hours","Risc de supradezvoltare: CAPE {c} J/kg, LI {li}":"Overdevelopment risk: CAPE {c} J/kg, LI {li}"," · risc de supradezvoltare de la {h}:00":" · overdevelopment risk from {h}:00","Favorabil {s} ({n}) · {w}":"Favourable {s} ({n}) · {w}","Doar {s}, sub fereastra minimă de {n} ore":"Only {s}, shorter than the {n}-hour minimum window"," · marginal {s}":" · marginal {s}","Nicio fereastră bună · calm (sub {c} m/s) {s}":"No good window · calm (under {c} m/s) {s}","Nicio fereastră bună":"No good window","Favorabil":"Favourable","Noapte":"Night","Instabilitate":"Instability","Soare":"Sun","răsărit {r} · apus {s}":"sunrise {r} · sunset {s}","Prognoză de model, nu o garanție. Decizia îți aparține, la decolare.":"Model forecast, not a guarantee. The decision is yours, at takeoff.","fără direcții setate":"no wind directions set","bune: {d}":"good: {d}","marginale: {d}":"marginal: {d}","Avertizare":"Warning","cu avertizare":"with a warning","Versiunea {v}":"Version {v}","fără direcții":"no directions","O zi are cel mult 24 de ore în aer.":"A day has at most 24 hours of airtime.","Pragurile trebuie să fie numere pozitive.":"Thresholds must be positive numbers.","„Calm sub” trebuie să fie mai mic decât „Bun până la”.":"“Calm below” must be lower than “Good up to”.","„Bun până la” nu poate depăși „Marginal până la”.":"“Good up to” cannot exceed “Marginal up to”.","„Rafale maxime” nu poate fi sub „Bun până la”.":"“Max gusts” cannot be below “Good up to”.","Serviciul de prognoză nu răspunde momentan.":"The forecast service is not responding right now.","Serviciul de prognoză a refuzat cererea (cod {s}).":"The forecast service refused the request (code {s}).","Serviciul de prognoză nu a răspuns la timp.":"The forecast service did not answer in time.","Ai modificări care nu au ajuns în Drive, așa că nu te-am deconectat. Exportă jurnalul în Excel sau încearcă din nou când ai internet.":"Some changes have not reached Drive yet, so you were not signed out. Export the log to Excel or try again when you are online.","Decolarea nu are direcții":"This takeoff has no wind directions","ParaglidingEarth nu are direcțiile ei. Până le setezi, verdictul e cel mult „Marginal”.":"ParaglidingEarth has no directions for it. Until you set them, the verdict is at most “Marginal”.","Sugerează din panta terenului":"Suggest from the slope","Setează de mână":"Set by hand","Modifică direcțiile":"Edit directions","Vânt bun până la {g} m/s, marginal până la {m}, rafale până la {r}":"Good wind up to {g} m/s, marginal up to {m}, gusts up to {r}","Reia configurarea":"Start setup again","Apasă din nou: alegi decolările de la zero":"Tap again: you will pick your takeoffs from scratch","Limite: {p}":"Limits: {p}","Fără țară":"No country","1 decolare":"1 takeoff","{n} decolări":"{n} takeoffs","{n} a fost scos din listă":"{n} was removed from the list","{n} a fost adăugat (fără direcții: setează-le din pagina lui)":"{n} was added (no directions: set them from its page)","Arăt decolările din jurul zonei tale aproximative (după fusul orar).":"Showing takeoffs around your approximate area (from your time zone).","Ai refuzat accesul la locație.":"Location access was denied.","Nu am putut afla poziția.":"Could not get your position.","Lângă mine":"Near me","Țară":"Country","Toată lumea":"Whole world","Zona":"Area","Rază":"Radius","În jurul poziției tale. Locația nu se salvează.":"Around your position. Your location is not stored.","Țara":"Country","Toată lumea: 11.508 decolări":"Whole world: 11,508 takeoffs","≈ 1 MB de descărcat. Util dacă vrei să răsfoiești alte țări; pentru zona ta, „Lângă mine” sau „Țară” e mai rapid.":"≈ 1 MB to download. Useful for browsing other countries; for your area, “Near me” or “Country” is faster.","Încarcă toată lumea":"Load the whole world","Caută după nume":"Search by name","Atinge o decolare ca s-o adaugi sau s-o scoți.":"Tap a takeoff to add or remove it.","Vedere":"View","Listă":"List","Hartă cu decolări: atinge una ca s-o adaugi":"Map of takeoffs: tap one to add it","{n} pe o rază de {r} km":"{n} within {r} km","{n} în {c}":"{n} in {c}","cele mai apropiate primele":"nearest first","{km} km":"{km} km","Niciun rezultat. Încearcă altă zonă sau harta.":"No results. Try another area or the map.","Nicio decolare în rază. Mărește raza sau alege țara.":"No takeoffs in range. Increase the radius or pick the country.","Nicio decolare.":"No takeoffs.","Continuă cu {n}":"Continue with {n}","Alege cel puțin o decolare":"Pick at least one takeoff","Gata · {n} în lista ta":"Done · {n} in your list","Fără direcții în ParaglidingEarth":"No directions in ParaglidingEarth","Scoate din listă":"Remove from list","Harta nu s-a putut încărca. Verifică internetul.":"The map could not load. Check your connection.","Bun venit":"Welcome","Alege decolările":"Pick your takeoffs","Ce limite ai?":"What are your limits?","Vântul pe ore la decolările tale, colorat după orientarea fiecăreia. Gratuit, fără cont.":"Hourly wind at your takeoffs, coloured by each takeoff's orientation. Free, no account.","📍 Decolări lângă mine":"📍 Takeoffs near me","Alege țara":"Pick a country","Locația e folosită doar ca să arătăm decolările din jurul tău. Nu se salvează și nu pleacă nicăieri.":"Your location is only used to show takeoffs around you. It is not stored or sent anywhere.","Ai un export din jurnal?":"Have a log export?","Importă-l":"Import it","Culorile din tablă se calculează după limitele tale. Le poți schimba oricând în Setări.":"The board colours follow your limits. You can change them any time in Settings.","1 decolare fără direcții":"1 takeoff without directions","{n} decolări fără direcții":"{n} takeoffs without directions","ParaglidingEarth nu are direcțiile lor: până le setezi, verdictul e cel mult „Marginal”. Le poți sugera din panta terenului din pagina fiecărei decolări.":"ParaglidingEarth has no directions for them: until you set them, the verdict is at most “Marginal”. You can suggest them from the slope on each takeoff's page.","Gata":"Done","Gata: {n} în tabla ta":"Done: {n} on your board","Direcțiile decolării":"Takeoff directions","Apasă: gri = nu, galben = marginal, verde = bun.":"Tap: grey = no, yellow = marginal, green = good.","Salvează direcțiile":"Save directions","Renunță":"Cancel","Caut panta terenului…":"Reading the slope…","Teren aproape plat în jurul decolării: alege direcțiile de mână.":"The ground around the takeoff is almost flat: pick the directions by hand.","Sugestie din panta terenului: coboară spre {d} ({s}°). Verifică și corectează înainte să salvezi.":"Suggested from the slope: it falls towards {d} ({s}°). Check and correct before saving.","Nu am putut citi panta terenului. Alege direcțiile de mână.":"Could not read the slope. Pick the directions by hand.","Direcțiile pentru {n} au fost salvate":"Directions for {n} saved","Elev / începător":"Student / beginner","Pilot":"Pilot","Avansat":"Advanced","Adaugă decolări":"Add takeoffs","Limitele tale":"Your limits","Personalizat (pragurile în m/s)":"Custom (thresholds in m/s)","Ore afișate":"Hours shown","Decolare care nu e în listă":"Takeoff not in the list","Direcții necunoscute":"Directions unknown","Vântul acum · stația Holfuy {n}":"Wind now · Holfuy station {n}","Anulează":"Undo","Încă nu ai nimic notat.":"Nothing logged yet.","Notează o zi de zbor cu „Adaugă zi de zbor”, sau cu „Am zburat aici” din pagina unei decolări. Poți trece și zborurile mai vechi.":"Log a flying day with “Add flying day”, or with “I flew here” on a takeoff's page. You can add older flights too.","{n} e din nou în listă":"{n} is back in the list","Pe ore":"By hour","Pe scurt":"Overview","Cele mai bune primele":"Best first","Prognoză":"Forecast","Jurnal":"Log","Setări":"Settings","Adaugă o decolare care nu e în listă":"Add a takeoff that is not in the list","Limba":"Language","Despre":"About","Prognoza: Open-Meteo · Decolări: ParaglidingEarth (CC BY-SA) · Vânt live: Holfuy":"Forecast: Open-Meteo · Takeoffs: ParaglidingEarth (CC BY-SA) · Live wind: Holfuy","Cum citești tabla":"How to read the board","Fiecare celulă e o oră la o decolare:":"Each cell is one hour at one takeoff:","Pictograma de sus: cerul și tipul de nori.":"Top icon: the sky and cloud type.","Săgeata: încotro bate vântul.":"Arrow: where the wind blows to.","Cifra mare: vântul la 10 m (m/s). Cifra mică: rafalele.":"Big number: wind at 10 m (m/s). Small number: gusts.","Culoarea: verdictul, după direcțiile decolării și limitele tale.":"Colour: the verdict, from the takeoff's directions and your limits.","Colțul marcat: o avertizare (vânt tare la altitudine, furtună, decolare fără direcții). Atinge celula ca să vezi motivul.":"Marked corner: a warning (strong wind aloft, storm, takeoff without directions). Tap the cell to see why.","Orele estompate: noapte, sau ore deja trecute azi.":"Faded hours: night, or hours already past today.","Arată toată ziua pentru fiecare decolare, cu fereastra cea mai bună. „Favorabil” cere minimum 2 ore bune la rând. Atinge o decolare ca să-i vezi orele.":"Shows the whole day for each takeoff, with its best window. “Favourable” needs at least 2 good hours in a row. Tap a takeoff to see its hours.","Navigare":"Navigation","Conectează-te cu Google și jurnalul se păstrează în Google Drive-ul tău, ca fișier Excel, la fel ca exportul. Aplicația vede doar fișierul ei; nimeni altcineva nu are acces.":"Sign in with Google and your log is kept in your own Google Drive, as an Excel file just like the export. The app only sees its own file; nobody else has access.","Pe ani":"By year","Anul {y}":"Year {y}","Arată toți anii":"Show all years","Ani":"Years","Atinge un an ca să vezi zilele lui. Barele arată timpul în aer pe fiecare lună.":"Tap a year to see its days. The bars show airtime in each month.","Ajutor":"Help","Ghid de utilizare":"User guide","Pas cu pas, cu imagini: tabla, culorile, decolările, jurnalul.":"Step by step, with pictures: the board, the colours, takeoffs, the flight log.","Prima dată aici?":"First time here?","Vezi ghidul, cu imagini":"Read the guide, with pictures","Sugestii":"Feedback","Despre ce e vorba":"What is it about","Idee":"Idea","Problemă":"Problem","Altceva":"Something else","Mesajul tău":"Your message","De exemplu: aș vrea vântul și în km/h.":"For example: I'd like the wind in km/h too.","Adaugă detalii tehnice (versiunea aplicației, limba, ecranul, browserul): ajută la găsirea problemelor.":"Add technical details (app version, language, screen, browser): they help track down problems.","Copiază mesajul":"Copy the message","Scrie câteva cuvinte despre ce ai vrea.":"Write a few words about what you have in mind.","Mesajul a fost copiat":"Message copied","Nu am putut copia. Selectează textul și copiază-l de mână.":"Couldn't copy. Select the text and copy it by hand.","Către":"To","Subiect":"Subject","Ai o idee sau ai găsit ceva care nu merge? Scrie aici; mesajul ajunge direct la autorul aplicației.":"Have an idea, or found something that doesn't work? Write it here; the message goes straight to the app's author.","Emailul tău (opțional)":"Your email (optional)","nume@exemplu.ro":"name@example.com","Doar dacă vrei un răspuns.":"Only if you'd like a reply.","Trimite":"Send","Mulțumim!":"Thank you!","Mesajul a ajuns la autorul aplicației.":"Your message reached the app's author.","Nu am putut trimite acum.":"Couldn't send it right now.","Verifică internetul și încearcă din nou, sau trimite-l din aplicația ta de email.":"Check your internet connection and try again, or send it from your email app.","Trimite din aplicația de email":"Send from my email app","Răspuns la":"Reply to","Adresa de email nu pare corectă. Poți s-o lași goală.":"That email address doesn't look right. You can leave it empty.","Se trimite…":"Sending…","Ai trimis mai multe mesaje la rând. Încearcă din nou peste un minut.":"You've sent several messages in a row. Try again in a minute.","Mulțumim! Mesajul a fost trimis.":"Thank you! Your message was sent.","Automat":"Automatic","Open-Meteo alege modelul potrivit locului. Pentru decolările din România: ICON-EU.":"Open-Meteo picks the right model for the place. For takeoffs in Romania: ICON-EU.","Serviciul meteo german (DWD): în Europa ICON-EU, după 5 zile ICON global.":"The German weather service (DWD): ICON-EU in Europe, ICON global after 5 days.","Centrul European, modelul implicit din Windy; aici pe grila datelor publice (~25 km), deci cifrele pot diferi puțin.":"The European Centre, Windy's default model; here on the public-data grid (~25 km), so the numbers can differ a little.","Serviciul meteo american (NOAA).":"The US weather service (NOAA).","Modelul meteo":"Weather model","Modelele dau cifre puțin diferite. Când diferă mult între ele, prognoza e nesigură.":"Models give slightly different numbers. When they differ a lot, the forecast is uncertain.","Modelul meteo: {m}":"Weather model: {m}","Model":"Model"};
+const EN = {"Vânt la Decolare":"Paragliding Wind","Se încarcă prognoza…":"Loading forecast…","Reîmprospătează prognoza":"Refresh forecast","Jurnal de zbor":"Flight log","Editează lista de situri":"Edit site list","Alege ziua":"Pick the day","Bun":"Good","Marginal":"Marginal","Nu":"No","Calm":"Calm","Pictograma: cerul și tipul de nori · săgeata: încotro bate vântul · cifra mare: vânt la 10 m, mică: rafale (m/s)":"Icon: sky and cloud type · arrow: where the wind blows to · big number: wind at 10 m, small: gusts (m/s)","Confidențialitate":"Privacy","Închide":"Close","Locație":"Site","Numele locației":"Site name","Data":"Date","Poți alege și o zi din trecut, pentru zborurile mai vechi.":"You can pick a past day to log older flights.","Timp în aer în ziua respectivă":"Airtime that day","Ore":"Hours","Minute":"Minutes","ore":"hours","minute":"minutes","Salvează":"Save","Șterge":"Delete","Zi de zbor":"Flying day","Editează ziua de zbor":"Edit flying day","Altă locație…":"Other site…","Situri și setări":"Sites & settings","Lista ta":"Your list","Apasă din nou pentru confirmare":"Tap again to confirm","Toate siturile din România":"All sites in Romania","De pe ParaglidingEarth, ordonate după distanța față de siturile tale. Apasă + ca să adaugi.":"From ParaglidingEarth, sorted by distance from your sites. Tap + to add.","Caută un sit din România (ex: Bunloc)":"Search a site in Romania (e.g. Bunloc)","Pune un pin pe hartă: completez coordonatele, altitudinea, numele și direcțiile sugerate din panta terenului. Poți corecta orice câmp, sau le poți scrie de mână.":"Drop a pin on the map and the coordinates, altitude, name and directions suggested by the slope are filled in. You can correct any field, or type them by hand.","Alege pe hartă":"Pick on the map","Sunt la decolare (GPS)":"I'm at the takeoff (GPS)","Hartă: atinge ca să pui pinul decolării":"Map: tap to drop the takeoff pin","Nume":"Name","ex: Făureni":"e.g. Făureni","Coordonate decolare sau link Google Maps":"Takeoff coordinates or Google Maps link","În Google Maps ține apăsat pe decolare, apoi copiază coordonatele afișate sus.":"In Google Maps, long-press the takeoff, then copy the coordinates shown at the top.","Altitudine decolare (m)":"Takeoff altitude (m)","Stație Holfuy (opțional)":"Holfuy station (optional)","ex: 774 sau holfuy.com/en/weather/774":"e.g. 774 or holfuy.com/en/weather/774","Dacă lași gol, se alege automat stația cea mai apropiată, la cel mult 5 km.":"Leave empty to use the nearest station within 5 km.","Direcții bune de vânt (apasă: gri = nu, galben = marginal, verde = bun)":"Good wind directions (tap: grey = no, yellow = marginal, green = good)","Adaugă situl":"Add site","Bun până la":"Good up to","Marginal până la":"Marginal up to","Calm sub":"Calm below","Rafale maxime":"Max gusts","Rafală − vânt peste":"Gust − wind above","Ploaie peste (mm/h)":"Rain above (mm/h)","De la ora":"From hour","Până la ora":"To hour","Bun de zbor":"Flyable","Nu e de zbor":"Not flyable","Calm (fără vânt)":"Calm (no wind)","Fără date":"No data","Vânt slab ({v} {u}), direcția nu contează":"Light wind ({v} {u}), direction doesn't matter","Direcție bună ({d})":"Good direction ({d})","Direcție marginală ({d})":"Marginal direction ({d})","Direcție nepotrivită ({d}) pentru decolare":"Wrong direction ({d}) for this takeoff","Vânt prea tare: {v} {u} (peste {lim})":"Too strong: {v} {u} (above {lim})","Vânt tare: {v} {u} (peste {lim})":"Strong wind: {v} {u} (above {lim})","Rafale {v} {u} (peste {lim})":"Gusts {v} {u} (above {lim})","Turbulent: rafalele depășesc vântul cu {v} {u}":"Turbulent: gusts exceed the wind by {v} {u}","Ploaie {v} mm/h":"Rain {v} mm/h","Senin":"Clear","Predominant senin":"Mostly clear","Parțial noros":"Partly cloudy","Mai mult noros":"Mostly cloudy","Înnorat":"Overcast","Ceață":"Fog","Ceață cu chiciură":"Freezing fog","Burniță slabă":"Light drizzle","Burniță":"Drizzle","Burniță densă":"Dense drizzle","Burniță înghețată":"Freezing drizzle","Ploaie slabă":"Light rain","Ploaie":"Rain","Ploaie puternică":"Heavy rain","Ploaie înghețată":"Freezing rain","Ninsoare slabă":"Light snow","Ninsoare":"Snow","Ninsoare puternică":"Heavy snow","Grăunțe de zăpadă":"Snow grains","Averse slabe":"Light showers","Averse":"Showers","Averse violente":"Violent showers","Averse de ninsoare":"Snow showers","Furtună":"Thunderstorm","Furtună cu grindină":"Thunderstorm with hail","Necunoscut":"Unknown","Nori de convecție: semn de termice.":"Convective clouds: a sign of thermals.","Dezvoltare verticală puternică: risc de supradezvoltare și averse.":"Strong vertical development: risk of overdevelopment and showers.","Nor de furtună: nu se zboară.":"Thunderstorm cloud: no flying.","Strat de nori joși: termice slabe.":"Layer of low clouds: weak thermals.","Plafon jos și uniform.":"Low, uniform cloud base.","Nori la altitudine medie.":"Mid-level clouds.","Strat la altitudine medie: umbrește solul, termice slabe.":"Mid-level layer: shades the ground, weak thermals.","Nori înalți subțiri: adesea anunță un front.":"Thin high clouds: often ahead of a front.","Văl înalt: slăbește termicele.":"High veil: weakens thermals.","Ești offline.":"You are offline.","Eroare de rețea.":"Network error.","Azi":"Today","Mâine":"Tomorrow","Se descarcă prognoza…":"Downloading forecast…","Actualizat {t} · Open-Meteo":"Updated {t} · Open-Meteo","Fără prognoză încă":"No forecast yet","Nu am putut descărca prognoza. {e}":"Couldn't download the forecast. {e}"," Arăt datele de la {t}.":" Showing data from {t}."," Apasă ↻ pentru a încerca din nou.":" Tap ↻ to try again.","Lista e goală. Adaugă decolările la care zbori ca să le vezi vântul pe ore.":"Your list is empty. Add the takeoffs you fly to see their hourly wind.","Adaugă situri":"Add sites","Se descarcă prognoza pentru {n} situri…":"Downloading the forecast for {n} sites…","Nu există încă date. Apasă ↻.":"No data yet. Tap ↻.","{n} ora {h}: {st}, {d} {v} {u}, {sky}":"{n} at {h}:00: {st}, {d} {v} {u}, {sky}","acum":"just now","acum {m} min":"{m} min ago","Cer":"Sky","Vânt la 10 m":"Wind at 10 m","Rafale":"Gusts","Vânt la ~1500 m":"Wind at ~1500 m","Nori":"Clouds","Temperatură":"Temperature","Decolare":"Takeoff","{v} {u} din {d}":"{v} {u} from {d}","(jos {lo} · mediu {mi} · sus {hi})":"(low {lo} · mid {mi} · high {hi})","ora {h}":"{h}:00","vânt din {d} {r} {u}":"wind from {d} {r} {u}","1 oră":"1 hour","{n} ore":"{n} hours","Cel mult marginal: {s} · {w}":"Marginal at best: {s} · {w}","Altitudine necunoscută":"Unknown altitude","Direcții bune: {d}":"Good directions: {d}","Marginal: {d}":"Marginal: {d}","✓ Am zburat aici":"✓ I flew here","Următoarele zile":"Next days","Fiecare pătrățel e o oră, de la {a} la {b}. Atinge o zi ca s-o vezi în tabel.":"Each square is one hour, from {a} to {b}. Tap a day to open it in the table.","la decolare":"at the takeoff","la {km} km":"{km} km away","Acum · stația Holfuy {n}":"Now · Holfuy station {n}","Istoric ↗":"History ↗",". Vânt măsurat în timp real; zonele colorate de pe cadran sunt setate de administratorul stației.":". Wind measured in real time; the coloured zones on the dial are set by the station owner.","Vântul acum la {n}":"Current wind at {n}","Stația {id}":"Station {id}","Hartă":"Map","Mută {n} mai sus":"Move {n} up","Mută {n} mai jos":"Move {n} down","Șterge {n}":"Delete {n}","Niciun sit în listă.":"No sites in your list.","{km} km de {n}":"{km} km from {n}","Adaugă {n}":"Add {n}","Niciun rezultat. Îl poți adăuga manual mai jos.":"No results. You can add it manually below.","Arată mai puține":"Show fewer","Arată toate cele {n} situri":"Show all {n} sites","vântul<br>bate din":"wind<br>from","nu":"no","marginal":"marginal","bun":"good","{n} a fost șters":"{n} removed","{n} a fost adăugat":"{n} added","Scrie un nume pentru sit.":"Enter a name for the site.","Linkurile scurte Google Maps nu conțin coordonatele. Deschide linkul, ține apăsat pe decolare și copiază coordonatele.":"Short Google Maps links don't contain the coordinates. Open the link, long-press the takeoff and copy the coordinates.","Coordonatele nu sunt valide. Exemplu: 46.6129, 23.4350":"These coordinates aren't valid. Example: 46.6129, 23.4350","Alege cel puțin o direcție bună de vânt.":"Pick at least one good wind direction.","1 zi":"1 day","{n} zile":"{n} days","în aer":"airtime","zi de zbor":"flying day","zile de zbor":"flying days","locație":"site","locații":"sites","În {y}: {d} în {z}.":"In {y}: {d} over {z}.","+ Adaugă zi de zbor":"+ Add flying day","Exportul e și backup: păstrează fișierul și încarcă-l cu „Import Excel” după ce schimbi telefonul. Se adaugă doar ce lipsește.":"The export is also a backup: keep the file and load it with “Import Excel” after changing phones. Only missing entries are added.","Pe zile":"By day","Pe locații":"By site","Încă nu ai nimic notat. Apasă „Adaugă zi de zbor”, sau „Am zburat aici” din pagina unei locații. Poți trece și zborurile mai vechi.":"Nothing logged yet. Tap “Add flying day”, or “I flew here” on a site's page. You can also log older flights.","Arată toate locațiile":"Show all sites","· {d} în {z}":"· {d} over {z}","Locații":"Sites","Atinge o locație ca să vezi zilele de acolo.":"Tap a site to see its days.","{z} · ultima: {d}":"{z} · last: {d}","Alege sau scrie locația.":"Pick or type the site.","Alege data.":"Pick the date.","Data nu poate fi în viitor.":"The date can't be in the future.","Orele și minutele nu pot fi negative.":"Hours and minutes can't be negative.","Scrie cât timp ai stat în aer.":"Enter your airtime.","Modificat":"Updated","Salvat: {s}, {d}":"Saved: {s}, {d}","Apasă din nou pentru ștergere":"Tap again to delete","Șters":"Deleted","Zile de zbor":"Flying days","Situri":"Sites","Timp în aer":"Airtime","Ultima zi":"Last day","Latitudine":"Latitude","Longitudine":"Longitude","Altitudine":"Altitude","Direcții bune":"Good directions","fără":"none","jurnal-zbor":"flight-log","Nimic nou: totul exista deja.":"Nothing new: everything was already there.","Am adăugat {x}.":"Added {x}."," și ":" and ","1 zi de zbor":"1 flying day","{n} zile de zbor":"{n} flying days","1 sit":"1 site","{n} situri":"{n} sites","Nu am putut citi fișierul. Alege un fișier exportat din jurnal.":"Couldn't read the file. Choose a file exported from the log.","Fișierul nu conține zile de zbor.":"The file contains no flying days.","Fișierul Excel a fost descărcat":"Excel file downloaded","Conectarea la Google a expirat sau a fost anulată.":"The Google sign-in expired or was cancelled.","Sincronizarea nu a reușit. Verifică internetul și încearcă din nou.":"Sync failed. Check your connection and try again.","Jurnalul pe toate dispozitivele.":"Your log on every device.","Detalii":"Details","Continuă cu Google":"Continue with Google","Sincronizez cu Drive-ul…":"Syncing with Drive…","Modificări încă nesincronizate.":"Changes not synced yet.","Sincronizat în Google Drive {t}.":"Synced to Google Drive {t}.","Sincronizează acum":"Sync now","Sincronizează":"Sync","Apasă din nou: jurnalul rămâne în Drive și se șterge de pe acest dispozitiv":"Tap again: the log stays in Drive and is removed from this device","Deconectează-te":"Sign out","Te-ai deconectat. Jurnalul e în siguranță în Drive.":"Signed out. Your log is safe in Drive.","Harta nu s-a putut încărca. Verifică internetul sau completează câmpurile de mână.":"The map couldn't load. Check your connection or fill in the fields by hand.","Relief":"Terrain","Satelit":"Satellite","Imagini © Esri":"Imagery © Esri","Caut altitudinea și numele locului…":"Looking up the altitude and place name…","Altitudine {a} m":"Altitude {a} m","panta ({s}°) coboară spre {d}: am marcat {d} bun și {a}, {b} marginal":"the slope ({s}°) faces {d}: marked {d} good and {a}, {b} marginal","teren aproape plat: alege direcțiile de mână":"nearly flat ground: pick the directions by hand","nu am găsit altitudinea, complet-o de mână":"couldn't find the altitude, enter it by hand","nume: {n}":"name: {n}","Aproape ({m} m) există deja „{n}” pe ParaglidingEarth, cu direcțiile stabilite de piloți.":"“{n}” is already on ParaglidingEarth nearby ({m} m), with directions set by pilots.","Adaugă „{n}”":"Add “{n}”","Telefonul nu oferă localizare în acest browser.":"Location isn't available in this browser.","Caut poziția GPS…":"Getting your GPS position…","Ai refuzat accesul la locație. Îl poți permite din setările browserului.":"Location access was denied. You can allow it in the browser settings.","Nu am putut afla poziția. Încearcă din nou sau pune pinul pe hartă.":"Couldn't get your position. Try again or drop the pin on the map.","Am adus datele de pe adresa veche.":"Your data was brought over from the old address.","Termeni":"Terms","Caută o decolare (ex: Bunloc)":"Search a takeoff (e.g. Bunloc)","Se încarcă lista de decolări…":"Loading the takeoff list…","Lista de decolări nu s-a putut încărca. Verifică internetul.":"The takeoff list couldn't load. Check your connection.","{km} km de tine":"{km} km from you","Arată mai multe ({n} rămase)":"Show more ({n} left)","Adaugă în listă":"Add to my list","Ordonate după distanța față de tine. Sursa: ParaglidingEarth. Apasă + ca să adaugi.":"Sorted by distance from you. Source: ParaglidingEarth. Tap + to add.","Ordonate după distanța față de siturile tale. Sursa: ParaglidingEarth. Apasă + ca să adaugi.":"Sorted by distance from your sites. Source: ParaglidingEarth. Tap + to add.","Ordonate aproximativ după zona ta (fusul orar al telefonului). Apasă „Lângă mine” pentru ordonare exactă. Sursa: ParaglidingEarth.":"Roughly sorted by your region (your phone's time zone). Tap “Near me” for exact sorting. Source: ParaglidingEarth.","Sursa: ParaglidingEarth. Caută după nume sau apasă „Lângă mine”.":"Source: ParaglidingEarth. Search by name or tap “Near me”.","Găsește decolări lângă mine":"Find takeoffs near me","{n} e deja în listă":"{n} is already in your list","Mărește harta ca să vezi decolările de pe ParaglidingEarth.":"Zoom in to see the takeoffs from ParaglidingEarth.","Noapte: fără lumină de zbor":"Night: no flying light","Decolarea nu are direcții setate: verifică dacă vântul din {d} e bun aici":"This takeoff has no wind directions set: check whether wind from {d} works here","Vânt foarte tare la ~1500 m: {v} {u} (peste {lim})":"Very strong wind at ~1500 m: {v} {u} (over {lim})","Vânt tare la ~1500 m: {v} {u} (peste {lim})":"Strong wind at ~1500 m: {v} {u} (over {lim})","Vânt la ~1500 m din spatele decolării ({d}, {v} {u}): risc de rotori":"Wind at ~1500 m from behind the takeoff ({d}, {v} {u}): rotor risk","Furtună prognozată la această oră":"Thunderstorm forecast at this hour","Furtună prognozată în ora următoare":"Thunderstorm forecast within the next hour","Furtună prognozată peste {n} ore":"Thunderstorm forecast in {n} hours","Risc de supradezvoltare: CAPE {c} J/kg, LI {li}":"Overdevelopment risk: CAPE {c} J/kg, LI {li}"," · risc de supradezvoltare de la {h}:00":" · overdevelopment risk from {h}:00","Favorabil {s} ({n}) · {w}":"Favourable {s} ({n}) · {w}","Doar {s}, sub fereastra minimă de {n} ore":"Only {s}, shorter than the {n}-hour minimum window"," · marginal {s}":" · marginal {s}","Nicio fereastră bună · calm (sub {c} {u}) {s}":"No good window · calm (under {c} {u}) {s}","Nicio fereastră bună":"No good window","Favorabil":"Favourable","Noapte":"Night","Instabilitate":"Instability","Soare":"Sun","răsărit {r} · apus {s}":"sunrise {r} · sunset {s}","Prognoză de model, nu o garanție. Decizia îți aparține, la decolare.":"Model forecast, not a guarantee. The decision is yours, at takeoff.","fără direcții setate":"no wind directions set","bune: {d}":"good: {d}","marginale: {d}":"marginal: {d}","Avertizare":"Warning","cu avertizare":"with a warning","Versiunea {v}":"Version {v}","fără direcții":"no directions","O zi are cel mult 24 de ore în aer.":"A day has at most 24 hours of airtime.","Pragurile trebuie să fie numere pozitive.":"Thresholds must be positive numbers.","„Calm sub” trebuie să fie mai mic decât „Bun până la”.":"“Calm below” must be lower than “Good up to”.","„Bun până la” nu poate depăși „Marginal până la”.":"“Good up to” cannot exceed “Marginal up to”.","„Rafale maxime” nu poate fi sub „Bun până la”.":"“Max gusts” cannot be below “Good up to”.","Serviciul de prognoză nu răspunde momentan.":"The forecast service is not responding right now.","Serviciul de prognoză a refuzat cererea (cod {s}).":"The forecast service refused the request (code {s}).","Serviciul de prognoză nu a răspuns la timp.":"The forecast service did not answer in time.","Ai modificări care nu au ajuns în Drive, așa că nu te-am deconectat. Exportă jurnalul în Excel sau încearcă din nou când ai internet.":"Some changes have not reached Drive yet, so you were not signed out. Export the log to Excel or try again when you are online.","Decolarea nu are direcții":"This takeoff has no wind directions","ParaglidingEarth nu are direcțiile ei. Până le setezi, verdictul e cel mult „Marginal”.":"ParaglidingEarth has no directions for it. Until you set them, the verdict is at most “Marginal”.","Sugerează din panta terenului":"Suggest from the slope","Setează de mână":"Set by hand","Modifică direcțiile":"Edit directions","Vânt bun până la {g} {u}, marginal până la {m}, rafale până la {r}":"Good wind up to {g} {u}, marginal up to {m}, gusts up to {r}","Reia configurarea":"Start setup again","Apasă din nou: alegi decolările de la zero":"Tap again: you will pick your takeoffs from scratch","Limite: {p}":"Limits: {p}","Fără țară":"No country","1 decolare":"1 takeoff","{n} decolări":"{n} takeoffs","{n} a fost scos din listă":"{n} was removed from the list","{n} a fost adăugat (fără direcții: setează-le din pagina lui)":"{n} was added (no directions: set them from its page)","Arăt decolările din jurul zonei tale aproximative (după fusul orar).":"Showing takeoffs around your approximate area (from your time zone).","Ai refuzat accesul la locație.":"Location access was denied.","Nu am putut afla poziția.":"Could not get your position.","Lângă mine":"Near me","Țară":"Country","Toată lumea":"Whole world","Zona":"Area","Rază":"Radius","În jurul poziției tale. Locația nu se salvează.":"Around your position. Your location is not stored.","Țara":"Country","Toată lumea: 11.508 decolări":"Whole world: 11,508 takeoffs","≈ 1 MB de descărcat. Util dacă vrei să răsfoiești alte țări; pentru zona ta, „Lângă mine” sau „Țară” e mai rapid.":"≈ 1 MB to download. Useful for browsing other countries; for your area, “Near me” or “Country” is faster.","Încarcă toată lumea":"Load the whole world","Caută după nume":"Search by name","Atinge o decolare ca s-o adaugi sau s-o scoți.":"Tap a takeoff to add or remove it.","Vedere":"View","Listă":"List","Hartă cu decolări: atinge una ca s-o adaugi":"Map of takeoffs: tap one to add it","{n} pe o rază de {r} km":"{n} within {r} km","{n} în {c}":"{n} in {c}","cele mai apropiate primele":"nearest first","{km} km":"{km} km","Niciun rezultat. Încearcă altă zonă sau harta.":"No results. Try another area or the map.","Nicio decolare în rază. Mărește raza sau alege țara.":"No takeoffs in range. Increase the radius or pick the country.","Nicio decolare.":"No takeoffs.","Continuă cu {n}":"Continue with {n}","Alege cel puțin o decolare":"Pick at least one takeoff","Gata · {n} în lista ta":"Done · {n} in your list","Fără direcții în ParaglidingEarth":"No directions in ParaglidingEarth","Scoate din listă":"Remove from list","Harta nu s-a putut încărca. Verifică internetul.":"The map could not load. Check your connection.","Bun venit":"Welcome","Alege decolările":"Pick your takeoffs","Ce limite ai?":"What are your limits?","Vântul pe ore la decolările tale, colorat după orientarea fiecăreia. Gratuit, fără cont.":"Hourly wind at your takeoffs, coloured by each takeoff's orientation. Free, no account.","📍 Decolări lângă mine":"📍 Takeoffs near me","Alege țara":"Pick a country","Locația e folosită doar ca să arătăm decolările din jurul tău. Nu se salvează și nu pleacă nicăieri.":"Your location is only used to show takeoffs around you. It is not stored or sent anywhere.","Ai un export din jurnal?":"Have a log export?","Importă-l":"Import it","Culorile din tablă se calculează după limitele tale. Le poți schimba oricând în Setări.":"The board colours follow your limits. You can change them any time in Settings.","1 decolare fără direcții":"1 takeoff without directions","{n} decolări fără direcții":"{n} takeoffs without directions","ParaglidingEarth nu are direcțiile lor: până le setezi, verdictul e cel mult „Marginal”. Le poți sugera din panta terenului din pagina fiecărei decolări.":"ParaglidingEarth has no directions for them: until you set them, the verdict is at most “Marginal”. You can suggest them from the slope on each takeoff's page.","Gata":"Done","Gata: {n} în tabla ta":"Done: {n} on your board","Direcțiile decolării":"Takeoff directions","Apasă: gri = nu, galben = marginal, verde = bun.":"Tap: grey = no, yellow = marginal, green = good.","Salvează direcțiile":"Save directions","Renunță":"Cancel","Caut panta terenului…":"Reading the slope…","Teren aproape plat în jurul decolării: alege direcțiile de mână.":"The ground around the takeoff is almost flat: pick the directions by hand.","Sugestie din panta terenului: coboară spre {d} ({s}°). Verifică și corectează înainte să salvezi.":"Suggested from the slope: it falls towards {d} ({s}°). Check and correct before saving.","Nu am putut citi panta terenului. Alege direcțiile de mână.":"Could not read the slope. Pick the directions by hand.","Direcțiile pentru {n} au fost salvate":"Directions for {n} saved","Elev / începător":"Student / beginner","Pilot":"Pilot","Avansat":"Advanced","Adaugă decolări":"Add takeoffs","Limitele tale":"Your limits","Personalizat (pragurile de vânt în m/s)":"Custom (wind thresholds in m/s)","Ore afișate":"Hours shown","Decolare care nu e în listă":"Takeoff not in the list","Direcții necunoscute":"Directions unknown","Vântul acum · stația Holfuy {n}":"Wind now · Holfuy station {n}","Anulează":"Undo","Încă nu ai nimic notat.":"Nothing logged yet.","Notează o zi de zbor cu „Adaugă zi de zbor”, sau cu „Am zburat aici” din pagina unei decolări. Poți trece și zborurile mai vechi.":"Log a flying day with “Add flying day”, or with “I flew here” on a takeoff's page. You can add older flights too.","{n} e din nou în listă":"{n} is back in the list","Pe ore":"By hour","Pe scurt":"Overview","Cele mai bune primele":"Best first","Prognoză":"Forecast","Jurnal":"Log","Setări":"Settings","Adaugă o decolare care nu e în listă":"Add a takeoff that is not in the list","Limba":"Language","Despre":"About","Prognoza: Open-Meteo · Decolări: ParaglidingEarth (CC BY-SA) · Vânt live: Holfuy":"Forecast: Open-Meteo · Takeoffs: ParaglidingEarth (CC BY-SA) · Live wind: Holfuy","Cum citești tabla":"How to read the board","Fiecare celulă e o oră la o decolare:":"Each cell is one hour at one takeoff:","Pictograma de sus: cerul și tipul de nori.":"Top icon: the sky and cloud type.","Săgeata: încotro bate vântul.":"Arrow: where the wind blows to.","Cifra mare: vântul la 10 m, în unitatea aleasă în Setări (implicit m/s). Cifra mică: rafalele.":"Big number: wind at 10 m, in the unit chosen in Settings (m/s by default). Small number: gusts.","Culoarea: verdictul, după direcțiile decolării și limitele tale.":"Colour: the verdict, from the takeoff's directions and your limits.","Colțul marcat: o avertizare (vânt tare la altitudine, furtună, decolare fără direcții). Atinge celula ca să vezi motivul.":"Marked corner: a warning (strong wind aloft, storm, takeoff without directions). Tap the cell to see why.","Orele estompate: noapte, sau ore deja trecute azi.":"Faded hours: night, or hours already past today.","Arată toată ziua pentru fiecare decolare, cu fereastra cea mai bună. „Favorabil” cere minimum 2 ore bune la rând. Atinge o decolare ca să-i vezi orele.":"Shows the whole day for each takeoff, with its best window. “Favourable” needs at least 2 good hours in a row. Tap a takeoff to see its hours.","Navigare":"Navigation","Conectează-te cu Google și jurnalul se păstrează în Google Drive-ul tău, ca fișier Excel, la fel ca exportul. Aplicația vede doar fișierul ei; nimeni altcineva nu are acces.":"Sign in with Google and your log is kept in your own Google Drive, as an Excel file just like the export. The app only sees its own file; nobody else has access.","Pe ani":"By year","Anul {y}":"Year {y}","Arată toți anii":"Show all years","Ani":"Years","Atinge un an ca să vezi zilele lui. Barele arată timpul în aer pe fiecare lună.":"Tap a year to see its days. The bars show airtime in each month.","Ajutor":"Help","Ghid de utilizare":"User guide","Pas cu pas, cu imagini: tabla, culorile, decolările, jurnalul.":"Step by step, with pictures: the board, the colours, takeoffs, the flight log.","Prima dată aici?":"First time here?","Vezi ghidul, cu imagini":"Read the guide, with pictures","Sugestii":"Feedback","Despre ce e vorba":"What is it about","Idee":"Idea","Problemă":"Problem","Altceva":"Something else","Mesajul tău":"Your message","De exemplu: lipsește o decolare din zona mea.":"For example: a takeoff near me is missing.","Adaugă detalii tehnice (versiunea aplicației, limba, ecranul, browserul): ajută la găsirea problemelor.":"Add technical details (app version, language, screen, browser): they help track down problems.","Copiază mesajul":"Copy the message","Scrie câteva cuvinte despre ce ai vrea.":"Write a few words about what you have in mind.","Mesajul a fost copiat":"Message copied","Nu am putut copia. Selectează textul și copiază-l de mână.":"Couldn't copy. Select the text and copy it by hand.","Către":"To","Subiect":"Subject","Ai o idee sau ai găsit ceva care nu merge? Scrie aici; mesajul ajunge direct la autorul aplicației.":"Have an idea, or found something that doesn't work? Write it here; the message goes straight to the app's author.","Emailul tău (opțional)":"Your email (optional)","nume@exemplu.ro":"name@example.com","Doar dacă vrei un răspuns.":"Only if you'd like a reply.","Trimite":"Send","Mulțumim!":"Thank you!","Mesajul a ajuns la autorul aplicației.":"Your message reached the app's author.","Nu am putut trimite acum.":"Couldn't send it right now.","Verifică internetul și încearcă din nou, sau trimite-l din aplicația ta de email.":"Check your internet connection and try again, or send it from your email app.","Trimite din aplicația de email":"Send from my email app","Răspuns la":"Reply to","Adresa de email nu pare corectă. Poți s-o lași goală.":"That email address doesn't look right. You can leave it empty.","Se trimite…":"Sending…","Ai trimis mai multe mesaje la rând. Încearcă din nou peste un minut.":"You've sent several messages in a row. Try again in a minute.","Mulțumim! Mesajul a fost trimis.":"Thank you! Your message was sent.","Automat":"Automatic","Open-Meteo alege modelul potrivit locului. Pentru decolările din România: ICON-EU.":"Open-Meteo picks the right model for the place. For takeoffs in Romania: ICON-EU.","Serviciul meteo german (DWD): în Europa ICON-EU, după 5 zile ICON global.":"The German weather service (DWD): ICON-EU in Europe, ICON global after 5 days.","Centrul European, modelul implicit din Windy; aici pe grila datelor publice (~25 km), deci cifrele pot diferi puțin.":"The European Centre, Windy's default model; here on the public-data grid (~25 km), so the numbers can differ a little.","Serviciul meteo american (NOAA).":"The US weather service (NOAA).","Modelul meteo":"Weather model","Modelele dau cifre puțin diferite. Când diferă mult între ele, prognoza e nesigură.":"Models give slightly different numbers. When they differ a lot, the forecast is uncertain.","Modelul meteo: {m}":"Weather model: {m}","Model":"Model","Personalizat (pragurile de vânt în {u})":"Custom (wind thresholds in {u})","Unitatea vântului":"Wind unit","Noduri":"Knots","Doar afișarea se schimbă: limitele rămân aceleași.":"Only the display changes: your limits stay the same.","Vântul în {u}":"Wind in {u}","metri pe secundă":"metres per second","kilometri pe oră":"kilometres per hour","noduri":"knots","mile pe oră":"miles per hour"," · timp din traseu":" · time from the track"," · timp notat de tine":" · time you logged","+ traseu":"+ track","Adaugi în jurnal?":"Add to your log?","Adaugă traseu…":"Add track…","Adaugă în jurnal":"Add to log","Adaugă încă un traseu…":"Add another track…","Alege fișierul zborului":"Choose the flight file","Aliniază traseul cu relieful la decolare":"Align the track with the terrain at takeoff","Altitudine maximă":"Max altitude","Altitudine minimă":"Min altitude","Altitudinea GPS la decolare față de relief: {d} m":"GPS altitude at takeoff vs terrain: {d} m","(aplicat doar traseului 3D; sus se vede altitudinea înregistrată).":"(applied to the 3D track only; the top bar shows the recorded altitude).","(neaplicat).":"(not applied).","Altă zi":"A different day","Arată coloanele termicelor":"Show thermal columns","Camera":"Camera","Cea mai bună urcare":"Best climb","Citesc {n}…":"Reading {n}…","Coborâre maximă":"Max sink","Deschid zborul…":"Opening the flight…","Deschide alt traseu":"Open another track","Deschide alt traseu…":"Open another track…","Deschide un traseu":"Open a track","Deschide":"Open","Deschis":"Open now","Detalii zbor":"Flight details","Din spate":"Chase","Din traseu: {d}.":"From the track: {d}.","Doar reluarea":"Replay only","Fișier":"File","Fișierul rămâne în acest browser; nu se trimite nicăieri.":"The file stays in this browser; it is not sent anywhere.","Hartă 3D":"3D map","Lasă fișierul zborului aici":"Drop the flight file here","Leagă de ziua din jurnal":"Link to the day in the log","Leagă totuși de ziua aleasă":"Link to the chosen day anyway","Liber":"Free","Mergi":"Go","Nicio termică găsită":"No thermals found","Nu am putut deschide fișierul.":"Could not open the file.","Pornește":"Play","Pauză":"Pause","Prea puține spirale ca să estimez vântul":"Not enough circling to estimate the wind","Profilul altitudinii; trage ca să alegi momentul":"Altitude profile; drag to pick the moment","Puncte":"Points","Relieful de la decolare nu s-a încărcat încă.":"The terrain at takeoff has not loaded yet.","Reluare 3D":"3D replay","Reluare 3D · Vânt la Decolare":"3D replay · Paragliding Wind","Termice":"Thermals","Trasee în acest browser":"Tracks in this browser","Traseu":"Track","Traseul a fost șters din acest browser. Ziua din jurnal rămâne.":"The track was deleted from this browser. The day stays in your log.","Traseul acesta nu e în acest browser. Alege fișierul zborului ca să-l vezi.":"This track is not in this browser. Choose the flight file to see it.","Traseul e din {d}, iar ziua aleasă e {z}.":"The track is from {d}, but the chosen day is {z}.","Traseul nu mai e în acest browser.":"The track is no longer in this browser.","Urmărește":"Follow","Vezi zborul în 3D, pe relief și imagini din satelit. Trage aici un fișier FIT, IGC sau GPX (merge și arhiva .zip din Garmin Connect), sau alege-l.":"See your flight in 3D, over terrain and satellite imagery. Drop a FIT, IGC or GPX file here (the .zip from Garmin Connect works too), or choose one.","Viteza reluării":"Playback speed","Viteză":"Speed","Vântul din spirale (de unde bate, km/h)":"Wind from circling (from, km/h)","Vântul din spirale":"Wind from circling","Zborul nu e încă în jurnal. Verifică ziua, locația și timpul în aer.":"This flight is not in your log yet. Check the day, the site and the airtime.","Zborul nu e încă în jurnal.":"This flight is not in your log yet.","Zborul":"Flight","din {d}":"from {d}","vânt –":"wind –","{n} spirale":"{n} turns","{n} termice":"{n} thermals","În jurnal există deja ziua aceasta: {s}, {d}. Leg traseul de ea? Timpul notat rămâne.":"This day is already in your log: {s}, {d}. Link the track to it? Your logged time stays.","Înapoi la jurnal":"Back to the log","Șterge traseul din acest browser":"Delete the track from this browser","▶ Reluare 3D":"▶ 3D replay","Fișierul nu pare un zbor (FIT, IGC sau GPX).":"The file does not look like a flight (FIT, IGC or GPX).","Fișierul nu are puncte GPS.":"The file has no GPS points.","Fișierul e prea mare.":"The file is too large.","Arhiva .zip e stricată.":"The .zip archive is damaged.","Arhiva nu conține un fișier .fit, .igc sau .gpx.":"The archive contains no .fit, .igc or .gpx file.","Nu am putut citi zborul din fișier.":"Could not read the flight from the file.","Tot zborul":"Whole flight","Decolare → prima termică":"Takeoff → 1st thermal","Ultimele {n} min":"Last {n} min","Termica {n} · {time} +{climb}":"Thermal {n} · {time} +{climb}","De la – până la…":"From – to…","Folosește HH:MM sau HH:MM:SS":"Use HH:MM or HH:MM:SS","„Până la” trebuie să fie la cel puțin 20 s după „De la”":"“To” must be at least 20 s after “From”","Zborul ține de la {a} până la {b}":"The flight lasts from {a} to {b}","Timp real ×{k} (~{d})":"Real time ×{k} (~{d})","{span} de zbor ({a}–{b}) → video de {d} s":"{span} of flight ({a}–{b}) → {d} s video","(time-lapse până la ×{k})":"(time-lapse up to ×{k})","Fișier: {f} · {w}×{h} · 30 fps. Se randează aici, în browser, cadru cu cadru: durează cam cât clipul sau mai mult.":"File: {f} · {w}×{h} · 30 fps. Rendered here in the browser, frame by frame: it takes about as long as the clip, or longer.","Browserul acesta nu poate înregistra video (lipsește MediaRecorder). Încearcă un Chrome, Edge sau Safari recent.":"This browser cannot record video (no MediaRecorder). Try a recent Chrome, Edge or Safari.","Se pregătește…":"Preparing…","Zborul meu":"My flight","{d} de zbor · max {m} m":"{d} flight · max {m} m","Imagini: Sentinel-2 cloudless 2024 de EOX IT Services GmbH (conține date Copernicus Sentinel modificate 2024), CC BY-NC-SA 4.0 · Relief: Mapzen / AWS Terrain Tiles (SRTM: USGS; EU-DEM: Copernicus)":"Imagery: Sentinel-2 cloudless 2024 by EOX IT Services GmbH (contains modified Copernicus Sentinel data 2024), CC BY-NC-SA 4.0 · Terrain: Mapzen / AWS Terrain Tiles (SRTM: USGS; EU-DEM: Copernicus)","ALT":"ALT","VITEZĂ":"SPEED","TIMP":"TIME","ALTITUDINE":"ALTITUDE","Reluare 3D a zborului":"3D flight replay","Cadrul {i} din {n}":"Frame {i} of {n}","mai durează cam {d}":"about {d} left","Înregistrarea a eșuat: {e}":"Recording failed: {e}","înregistrat în {d}":"recorded in {d}","rezoluție redusă (limita plăcii video)":"reduced resolution (graphics card limit)","Oprire la final":"Stop at end","În buclă":"Loop","Înregistrează porțiunea":"Record the part","Înregistrează video":"Record video","Orbită la decolare, din spate pe planări, orbită lentă în termice, la final vederea de ansamblu.":"Orbit at takeoff, chase on glides, slow orbit in thermals, overview at the end.","Camera de acum (Din spate, Urmărește sau Liber), cu același unghi și zoom.":"The current camera (Chase, Follow or Free), with the same angle and zoom.","Selectează o porțiune":"Select a part","Aplică":"Apply","De la":"From","Până la":"To","Setează":"Set","Trage de mânerele albe de pe profil; cu tastatura: Tab până la un mâner, apoi ← / → (Shift: câte un minut).":"Drag the white handles on the profile; with the keyboard: Tab to a handle, then ← / → (Shift: one minute).","✂ Selectează o porțiune":"✂ Select a part","Încadrează":"Fit view","Cum se folosește":"How to use it","Alege fișierul zborului (FIT, IGC, GPX sau arhiva .zip din Garmin Connect) ori trage-l pe pagină.":"Choose the flight file (FIT, IGC, GPX or the .zip from Garmin Connect) or drop it on the page.","„Adaugă în jurnal” leagă traseul de ziua de zbor din Jurnal; de acolo îl redeschizi cu un clic.":"“Add to log” links the track to the flying day in the Log; reopen it from there with one click.","Redare":"Playback","▶ pornește sau oprește; butonul cu viteza (10×) o schimbă.":"▶ plays or pauses; the speed button (10×) changes the speed.","Trage pe profilul altitudinii ca să sari la orice moment.":"Drag on the altitude profile to jump to any moment.","Tastatură: Spațiu pornește / oprește, ← și → sar înapoi / înainte.":"Keyboard: Space plays / pauses, ← and → jump back / forward.","Din spate: camera stă în spatele parapantei. Urmărește: parapanta rămâne în centru, harta nu se rotește. Liber: muți harta cum vrei.":"Chase: the camera stays behind the glider. Follow: the glider stays in the centre, the map does not rotate. Free: move the map as you like.","Când tragi de hartă, camera trece pe Liber; apasă Din spate sau Urmărește ca să revii.":"Dragging the map switches the camera to Free; tap Chase or Follow to go back.","Gesturi":"Gestures","Culori":"Colours","Traseul și profilul sunt colorate după vario: albastru coboară, alb ≈ 0, verde urcă, galben → roșu urcare puternică.":"The track and the profile are coloured by vario: blue sinks, white ≈ 0, green climbs, yellow → red strong climb.","Coloanele verticale sunt termicele găsite: culoarea arată urcarea medie, eticheta urcarea și înălțimea câștigată. Pe profil, termicele sunt benzi verzi.":"The vertical columns are the detected thermals: the colour shows the average climb, the label the climb and the height gained. On the profile, thermals are green bands.","Vântul (în HUD, sub ceas) e estimat din deriva spiralelor: de unde bate și cât de tare.":"The wind (in the HUD, under the clock) is estimated from the drift of the circles: where it blows from and how strong.","O porțiune din zbor":"Part of the flight","„Selectează o porțiune”: trage cele două mânere albe de pe profil sau alege o termică, ultimele minute ori „De la – până la”, apoi Aplică.":"“Select a part”: drag the two white handles on the profile or pick a thermal, the last minutes or “From – to”, then Apply.","Video":"Video","„Înregistrează video” face un clip din porțiune sau din tot zborul: alegi formatul (9:16, 16:9, 1:1), durata și camera. Clipul are titlu, HUD, profil și atribuirea hărții; apoi Descarcă sau Distribuie.":"“Record video” makes a clip of the part or of the whole flight: choose the format (9:16, 16:9, 1:1), the length and the camera. The clip has a title, HUD, profile and the map attribution; then Download or Share.","Ține pagina deschisă și vizibilă cât se înregistrează; durează cam cât clipul sau mai mult.":"Keep the page open and visible while recording; it takes about as long as the clip, or longer.","Fișierele și videoclipurile rămân în acest browser; nu se trimit nicăieri. Doar imaginile hărții și relieful se descarcă de la furnizorii lor.":"Files and videos stay in this browser; nothing is uploaded. Only the map imagery and terrain are downloaded from their providers.","Ce":"What","Porțiunea":"The part","Format":"Format","Durată":"Length","Cinematică automată":"Automatic cinematic","Camera actuală":"Current camera","Înregistrează":"Record","Ține pagina deschisă și vizibilă; nimic nu se trimite pe internet.":"Keep the page open and visible; nothing is sent over the internet.","Video gata":"Video ready","Distribuie":"Share","Descarcă":"Download","Alegeri rapide":"Quick picks","HH:MM":"HH:MM","Schimbă porțiunea":"Change the part","Arată tot zborul":"Show whole flight","Începutul porțiunii":"Start of the part","Sfârșitul porțiunii":"End of the part","Ce se înregistrează":"What to record","Camera videoclipului":"Video camera","Înregistrare video":"Video recording","{n} min":"{n} min","Arată tot traseul":"Show the whole track","Lungimea urmei":"Trail length","Lungimea urmei (minute)":"Trail length (minutes)","Redarea rămâne în porțiune (în buclă sau cu oprire la final), restul zborului nu se mai desenează, iar „Încadrează” arată toată porțiunea. Porțiunea se ține minte pentru fiecare zbor.":"Playback stays inside the part (looping or stopping at the end), the rest of the flight is not drawn, and “Fit view” frames the whole part. The part is remembered for each flight.","Traseul apare pe măsură ce zbori: în spate urma ultimelor minute, în față, mai șters, traseul care urmează („fantoma”). În meniul ☰ alegi lungimile lor sau „Arată tot traseul”.":"The track appears as you fly: behind, the trail of the last minutes; ahead, fainter, the track still to come (the “ghost”). In the ☰ menu you choose their lengths or “Show the whole track”.","Altfel se vede doar o fereastră în jurul parapantei: urma din spate, care se șterge treptat, și traseul care urmează, ca o fantomă tot mai ștearsă.":"Otherwise only a window around the glider is shown: the trail behind, fading out gradually, and the track ahead as a ghost that fades away.","Traseul înainte (fantomă)":"Track ahead (ghost)","Traseul înainte, în minute (0 = oprit)":"Track ahead, in minutes (0 = off)","oprit":"off","Imagini: {a} · Relief: Mapzen / AWS Terrain Tiles (SRTM: USGS; EU-DEM: Copernicus)":"Imagery: {a} · Terrain: Mapzen / AWS Terrain Tiles (SRTM: USGS; EU-DEM: Copernicus)","Contactez Cesium ion…":"Contacting Cesium ion…","Merge: imagini Bing prin Cesium ion.":"Working: Bing imagery via Cesium ion.","Imaginile detaliate (Cesium ion) nu s-au putut încărca; folosesc Sentinel-2.":"The detailed imagery (Cesium ion) could not be loaded; using Sentinel-2.","Imaginile Bing nu se încarcă; folosesc Sentinel-2.":"Bing imagery is not loading; using Sentinel-2.","Browserul nu permite lipirea de aici; lipește în câmp (Cmd/Ctrl + V).":"The browser does not allow pasting from here; paste into the field (Cmd/Ctrl + V).","Nu am putut folosi Cesium ion.":"Could not use Cesium ion.","Lipește întâi tokenul tău Cesium ion.":"Paste your Cesium ion token first.","Tokenul nu e valid sau a expirat (Cesium ion a răspuns {s}).":"The token is not valid or has expired (Cesium ion answered {s}).","Contul tău Cesium ion nu are „Bing Maps Aerial” (asset 2); adaug-o din Asset Depot.":"Your Cesium ion account does not have “Bing Maps Aerial” (asset 2); add it from the Asset Depot.","Nu pot contacta Cesium ion (fără internet sau adresă blocată).":"Cannot reach Cesium ion (no internet or the address is blocked).","Cesium ion a dat un răspuns neașteptat.":"Cesium ion gave an unexpected answer.","Cesium ion a răspuns cu eroarea {s}.":"Cesium ion answered with error {s}.","Bing nu a dat informațiile despre imagini ({s}).":"Bing did not return the imagery information ({s}).","Bing nu a dat informațiile despre imagini.":"Bing did not return the imagery information.","Imagini":"Imagery","Satelit gratuit (Sentinel-2)":"Free satellite (Sentinel-2)","Satelit detaliat (Cesium ion)":"Detailed satellite (Cesium ion)","Tokenul tău Cesium ion":"Your Cesium ion token","Lipește":"Paste","Testează și folosește":"Test and use","Ține minte în acest browser":"Remember in this browser","Imagini Bing Maps Aerial prin Cesium ion, cu tokenul tău gratuit de la":"Bing Maps Aerial imagery via Cesium ion, with your own free token from","ion.cesium.com":"ion.cesium.com","; site-ul nu are niciun token. Tokenul se trimite doar la api.cesium.com și stă în acest browser doar dacă bifezi „Ține minte”.":"; the site has no token of its own. The token is sent only to api.cesium.com and is kept in this browser only if you tick “Remember”.","Imagini: Sentinel-2 cloudless (EOX) sau Bing prin Cesium ion. Relief: AWS Terrain Tiles. Analiza zborului e aceeași ca în aplicația SkyReplay.":"Imagery: Sentinel-2 cloudless (EOX) or Bing via Cesium ion. Terrain: AWS Terrain Tiles. The flight analysis is the same as in the SkyReplay app.","Imagini detaliate":"Detailed imagery","În meniul ☰ poți alege „Satelit detaliat (Cesium ion)”: fiecare vizitator își folosește propriul token gratuit de la ion.cesium.com (site-ul nu are și nu publică niciun token). Tokenul pleacă doar spre api.cesium.com.":"In the ☰ menu you can choose “Detailed satellite (Cesium ion)”: each visitor uses their own free token from ion.cesium.com (the site has and publishes no token). The token goes only to api.cesium.com.","eyJhbGciOi…":"eyJhbGciOi…","Mai mult…":"More…","Un deget: mută · Două degete: zoom și rotește · Două degete sus/jos: înclină":"One finger: move · Two fingers: zoom and rotate · Two fingers up/down: tilt","Două degete: mută · Ciupire: zoom · Shift: rotește · ⌥: înclină":"Two fingers: move · Pinch: zoom · Shift: rotate · ⌥: tilt","Trage: mută · Rotiță: zoom · Ctrl + trage (sau click dreapta + trage): rotește și înclină · Touchpad: două degete mută, ciupire zoom":"Drag: move · Wheel: zoom · Ctrl + drag (or right-click + drag): rotate and tilt · Touchpad: two fingers move, pinch zooms","Telefon sau tabletă (Android, iPhone, iPad)":"Phone or tablet (Android, iPhone, iPad)","Un deget: mută harta.":"One finger: move the map.","Două degete: ciupește pentru zoom; rotește-le ca să rotești harta.":"Two fingers: pinch to zoom; twist them to rotate the map.","Două degete trase împreună în sus sau în jos: înclină vederea.":"Two fingers dragged together up or down: tilt the view.","Atinge de două ori: apropie.":"Double-tap: zoom in.","Mac (touchpad sau mouse)":"Mac (trackpad or mouse)","Touchpad: două degete mută harta, ciupirea face zoom.":"Trackpad: two fingers move the map, pinch zooms.","Shift + două degete: rotește. ⌥ (Option) + două degete în sus sau în jos: înclină.":"Shift + two fingers: rotate. ⌥ (Option) + two fingers up or down: tilt.","Mouse: trage ca să muți, rotița face zoom, Ctrl + trage (sau click dreapta + trage) rotește și înclină.":"Mouse: drag to move, the wheel zooms, Ctrl + drag (or right-click + drag) rotates and tilts.","Windows sau Linux (mouse sau touchpad)":"Windows or Linux (mouse or touchpad)","Mouse: trage ca să muți, rotița face zoom, click dreapta + trage (sau Ctrl + trage) rotește și înclină.":"Mouse: drag to move, the wheel zooms, right-click + drag (or Ctrl + drag) rotates and tilts.","Touchpad (Chrome, Edge): două degete mută harta, ciupirea face zoom, Shift + două degete rotește, Alt + două degete înclină.":"Touchpad (Chrome, Edge): two fingers move the map, pinch zooms, Shift + two fingers rotates, Alt + two fingers tilts.","Sursele hărții":"Map sources","Arată toate sursele hărții":"Show all map sources","Arată indiciile de gesturi (jos)":"Show the gesture hints (bottom)","Pe video":"On the video","Titlu la început":"Title at the start","Date de zbor (altitudine, vario, viteză, timp)":"Flight data (altitude, vario, speed, time)","Profil de altitudine":"Altitude profile","Sursele hărții (mereu: o cere licența imaginilor și a reliefului)":"Map sources (always: required by the imagery and terrain licences)","paraglidingwind.com":"paraglidingwind.com"};
 const LANG = (() => {
   const q = new URLSearchParams(location.search).get('lang');
   if (q === 'ro' || q === 'en'){ try{ localStorage.setItem('vld.lang', JSON.stringify(q)) }catch{} return q; }
@@ -571,14 +591,17 @@ function translateStatic(){
   $('#ver').textContent = t('Versiunea {v}', {v: VERSION});
   for (const a of document.querySelectorAll('#langSeg a, #topLang a')) a.setAttribute('aria-current', String(a.dataset.lang === LANG));
 }
-const VERSION = '2ced7a5';
+const VERSION = '0d26e59';
 const SKY_ICONS = {"sun":[{"d":"M12 7.5 A4.5 4.5 0 1 0 12 16.5 A4.5 4.5 0 1 0 12 7.5 Z","r":"sun","f":1},{"d":"M12 2 V4.2 M12 19.8 V22 M2 12 H4.2 M19.8 12 H22 M4.9 4.9 L6.5 6.5 M17.5 17.5 L19.1 19.1 M4.9 19.1 L6.5 17.5 M17.5 6.5 L19.1 4.9","r":"sun"}],"moon":[{"d":"M19.5 14.6 A7.8 7.8 0 1 1 9.4 4.5 A6.2 6.2 0 0 0 19.5 14.6 Z","r":"ink"}],"partly":[{"d":"M6.03 10.77 A3.5 3.5 0 1 1 12 8.3","r":"sun"},{"d":"M8.5 2.6 V3.9 M2.6 8.3 H3.9 M4.3 4.1 L5.2 5 M12.7 4.1 L11.8 5","r":"sun"},{"d":"M9.5 20 H17.7 A3.4 3.4 0 0 0 18.2 13.23 A4.6 4.6 0 0 0 9.3 12.3 A3.85 3.85 0 0 0 9.5 20 Z","r":"ink"}],"cloud":[{"d":"M7 19 H17.2 A4.3 4.3 0 0 0 17.8 10.44 A5.8 5.8 0 0 0 6.6 9.9 A4.6 4.6 0 0 0 7 19 Z","r":"ink"}],"overcast":[{"d":"M5.2 14.2 A3.6 3.6 0 0 1 6.4 7.3 A5 5 0 0 1 15.6 6.4","r":"ink"},{"d":"M8 20.5 H17.5 A3.6 3.6 0 0 0 18 13.33 A5 5 0 0 0 8.2 12.4 A4.05 4.05 0 0 0 8 20.5 Z","r":"ink"}],"cumulus":[{"d":"M3.5 19 H20.5","r":"ink"},{"d":"M5.5 19 A3 3 0 0 1 6.5 13.2 A3.6 3.6 0 0 1 11.5 8.5 A4 4 0 0 1 18 12 A3.6 3.6 0 0 1 18.5 19","r":"ink"},{"d":"M20 3.6 A1.9 1.9 0 1 0 20 7.4 A1.9 1.9 0 1 0 20 3.6 Z","r":"sun","f":1}],"cirrus":[{"d":"M2.5 11 C6.5 8 10 13 15 10 M4.5 15.5 C8.5 13 12.5 17.5 20.5 14 M2.5 20 C5.5 18.5 8.5 21 12.5 19.5","r":"ink"},{"d":"M18 3.6 A2.3 2.3 0 1 0 18 8.2 A2.3 2.3 0 1 0 18 3.6 Z","r":"sun","f":1}],"fog":[{"d":"M4 7 H20 M6 11 H18 M4 15 H20 M7 19 H17","r":"ink"}],"rain":[{"d":"M7 15 H17.2 A4.3 4.3 0 0 0 17.8 6.44 A5.8 5.8 0 0 0 6.6 5.9 A4.6 4.6 0 0 0 7 15 Z","r":"ink"},{"d":"M8.5 18 L7.5 21 M12.5 18 L11.5 21 M16.5 18 L15.5 21","r":"water"}],"thunder":[{"d":"M7 15 H17.2 A4.3 4.3 0 0 0 17.8 6.44 A5.8 5.8 0 0 0 6.6 5.9 A4.6 4.6 0 0 0 7 15 Z","r":"ink"},{"d":"M13 14.5 L10.5 18.5 H13.5 L11.5 22.5","r":"sun"}],"snow":[{"d":"M7 15 H17.2 A4.3 4.3 0 0 0 17.8 6.44 A5.8 5.8 0 0 0 6.6 5.9 A4.6 4.6 0 0 0 7 15 Z","r":"ink"},{"d":"M8 18.5 V18.6 M12 19.5 V19.6 M16 18.5 V18.6 M10 22 V22.1 M14 22 V22.1","r":"water"}]};
 let HOLFUY = [];   // stațiile Holfuy din toată lumea, din holfuy.json (încărcat la pornire)
 const GOOGLE_CLIENT_ID = "649701687476-dkeevrquqrkupso4aeupqbou5lrfkrkl.apps.googleusercontent.com";
 const FEEDBACK_EMAIL = 'feedback@paraglidingwind.com';   // redirecționată de Cloudflare Email Routing către autor
 const HOLFUY_MAX_KM = 5;
 const DIRS = LANG === 'en' ? ['N','NE','E','SE','S','SW','W','NW'] : ['N','NE','E','SE','S','SV','V','NV'];
-const DEFAULT_SETTINGS = {good:5, marg:7, calm:1, gust:9, spread:4, rain:0.2, from:8, to:20, model:'best_match'};
+const DEFAULT_SETTINGS = {good:5, marg:7, calm:1, gust:9, spread:4, rain:0.2, from:8, to:20, model:'best_match', unit:'ms'};
+/* UI-13: unitatea vântului (UNITS e în core.js). say = cum o citește cititorul de ecran; hf = numele ei pentru widgetul Holfuy. */
+const UNIT_INFO = {ms: {say: 'metri pe secundă', hf: 'm/s'}, kmh: {say: 'kilometri pe oră', hf: 'km/h'}, kt: {say: 'noduri', hf: 'knots'}, mph: {say: 'mile pe oră', hf: 'mph'}};
+const unitName = () => UNITS[unitOf(settings)].n;
 /* FIA-04: modelul meteo (parametrul models din Open-Meteo). Automat = best_match: Open-Meteo alege modelul potrivit locului
    (pentru decolările din România, ICON-EU). Doar modele cu toate cele 7 zile și vântul la ~1500 m (ICON-EU singur are 5 zile,
    ECMWF la 9 km nu are vântul la 850 hPa, deci folosim variantele de mai jos). */
@@ -607,6 +630,12 @@ const CAPE_RISK = 800, LI_RISK = -2;                  // supradezvoltare
 const STORM_AHEAD = 2;                                // ore înainte de o furtună prognozată
 const MIN_WINDOW = 2;                                 // ore favorabile la rând ca ziua să fie „Favorabil”
 
+/* UI-13: unitatea vântului. Prognoza și pragurile rămân în m/s; doar textele se convertesc, după s.unit din setări. */
+const UNITS = {ms: {n: 'm/s', f: 1}, kmh: {n: 'km/h', f: 3.6}, kt: {n: 'kt', f: 1.943844}, mph: {n: 'mph', f: 2.236936}};
+const unitOf = s => s && Object.hasOwn(UNITS, s.unit) ? s.unit : 'ms';
+const spd = (v, s, dec = 1) => (v * UNITS[unitOf(s)].f).toFixed(dec);   // o viteză, fără unitate
+const lim = (v, s) => String(Math.round(v * UNITS[unitOf(s)].f * 10) / 10);   // un prag: cel mult o zecimală
+
 function sectorOf(deg){ return Math.round(((deg % 360) + 360) % 360 / 45) % 8; }
 const knownDirs = site => site.o.some(v => v > 0);
 
@@ -615,32 +644,32 @@ const knownDirs = site => site.o.some(v => v > 0);
 function rate(site, w, s, ctx = {}){
   if (!w || w.ws == null || w.wd == null) return {st:'na', why:[], warn:[]};
   if (w.day === 0) return {st:'night', why:[['night', t('Noapte: fără lumină de zbor')]], warn:[]};
-  const why = [], warn = []; let st = 'go';
+  const why = [], warn = [], u = UNITS[unitOf(s)].n; let st = 'go';
   const bump = (to, msg, kind) => { why.push([to, msg, kind]); if (kind && !warn.includes(kind)) warn.push(kind); if (RANK[to] > RANK[st]) st = to; };
   const known = knownDirs(site);
   if (w.ws < s.calm){
-    st = 'calm'; why.push(['calm', t('Vânt slab ({v} m/s), direcția nu contează', {v: w.ws.toFixed(1)})]);
+    st = 'calm'; why.push(['calm', t('Vânt slab ({v} {u}), direcția nu contează', {v: spd(w.ws, s), u})]);
   } else {
     const sec = sectorOf(w.wd), sc = site.o[sec];
     if (!known) bump('maybe', t('Decolarea nu are direcții setate: verifică dacă vântul din {d} e bun aici', {d: DIRS[sec]}), 'nodir');
     else if (sc === 2) why.push(['go', t('Direcție bună ({d})', {d: DIRS[sec]})]);
     else if (sc === 1) bump('maybe', t('Direcție marginală ({d})', {d: DIRS[sec]}));
     else bump('no', t('Direcție nepotrivită ({d}) pentru decolare', {d: DIRS[sec]}));
-    if (w.ws > s.marg) bump('no', t('Vânt prea tare: {v} m/s (peste {lim})', {v: w.ws.toFixed(1), lim: s.marg}));
-    else if (w.ws > s.good) bump('maybe', t('Vânt tare: {v} m/s (peste {lim})', {v: w.ws.toFixed(1), lim: s.good}));
+    if (w.ws > s.marg) bump('no', t('Vânt prea tare: {v} {u} (peste {lim})', {v: spd(w.ws, s), u, lim: lim(s.marg, s)}));
+    else if (w.ws > s.good) bump('maybe', t('Vânt tare: {v} {u} (peste {lim})', {v: spd(w.ws, s), u, lim: lim(s.good, s)}));
   }
   if (w.wg != null){
-    if (w.wg > s.gust) bump('no', t('Rafale {v} m/s (peste {lim})', {v: w.wg.toFixed(1), lim: s.gust}));
-    else if (w.wg - w.ws > s.spread) bump('maybe', t('Turbulent: rafalele depășesc vântul cu {v} m/s', {v: (w.wg-w.ws).toFixed(1)}));
+    if (w.wg > s.gust) bump('no', t('Rafale {v} {u} (peste {lim})', {v: spd(w.wg, s), u, lim: lim(s.gust, s)}));
+    else if (w.wg - w.ws > s.spread) bump('maybe', t('Turbulent: rafalele depășesc vântul cu {v} {u}', {v: spd(w.wg-w.ws, s), u}));
   }
   if (w.pr != null && w.pr > s.rain) bump('no', t('Ploaie {v} mm/h', {v: w.pr.toFixed(1)}));
   // SIG-01: vântul de la ~1500 m. Tare, sau din spatele decolării (zonă de sub vânt, rotori).
   if (w.w8 != null && w.d8 != null){
     const s8 = sectorOf(w.d8);
-    if (w.w8 > ALT_NO) bump('no', t('Vânt foarte tare la ~1500 m: {v} m/s (peste {lim})', {v: w.w8.toFixed(1), lim: ALT_NO}), 'alt');
-    else if (w.w8 > ALT_MARG) bump('maybe', t('Vânt tare la ~1500 m: {v} m/s (peste {lim})', {v: w.w8.toFixed(1), lim: ALT_MARG}), 'alt');
+    if (w.w8 > ALT_NO) bump('no', t('Vânt foarte tare la ~1500 m: {v} {u} (peste {lim})', {v: spd(w.w8, s), u, lim: lim(ALT_NO, s)}), 'alt');
+    else if (w.w8 > ALT_MARG) bump('maybe', t('Vânt tare la ~1500 m: {v} {u} (peste {lim})', {v: spd(w.w8, s), u, lim: lim(ALT_MARG, s)}), 'alt');
     if (known && site.o[s8] === 0 && w.w8 > ALT_BEHIND)
-      bump('maybe', t('Vânt la ~1500 m din spatele decolării ({d}, {v} m/s): risc de rotori', {d: DIRS[s8], v: w.w8.toFixed(1)}), 'alt');
+      bump('maybe', t('Vânt la ~1500 m din spatele decolării ({d}, {v} {u}): risc de rotori', {d: DIRS[s8], v: spd(w.w8, s), u}), 'alt');
   }
   // SIG-02: furtună acum sau în următoarele ore; altfel instabilitate mare (supradezvoltare).
   const storm = [w, ...(ctx.next || [])].slice(0, STORM_AHEAD + 1).findIndex(x => x && x.code >= 95);
@@ -668,8 +697,8 @@ function summarize(site, hs, ws, s, extra = []){
     const part = ws.slice(a, b + 1).filter(w => w && w.ws != null && w.wd != null), cnt = new Map();
     part.forEach(w => { const k = DIRS[sectorOf(w.wd)]; cnt.set(k, (cnt.get(k) || 0) + 1); });
     let dir = '–', mx = 0; for (const [k, v] of cnt) if (v > mx){ dir = k; mx = v; }
-    const lo = Math.round(Math.min(...part.map(w => w.ws))), hi = Math.round(Math.max(...part.map(w => w.ws)));
-    return t('vânt din {d} {r} m/s', {d: dir, r: lo === hi ? lo : lo + '–' + hi});
+    const lo = spd(Math.min(...part.map(w => w.ws)), s, 0), hi = spd(Math.max(...part.map(w => w.ws)), s, 0);
+    return t('vânt din {d} {r} {u}', {d: dir, r: lo === hi ? lo : lo + '–' + hi, u: UNITS[unitOf(s)].n});
   };
   const goRuns = runs('go'), g = longest(goRuns.filter(r => n(r) >= MIN_WINDOW)), m = longest(runs('maybe')), c = longest(runs('calm'));
   const si = rs.findIndex(r => r.warn.includes('storm'));
@@ -679,7 +708,7 @@ function summarize(site, hs, ws, s, extra = []){
     + (m ? t(' · marginal {s}', {s: span(m)}) : '') + tail};
   if (m) return {sts, st:'maybe', text: t('Cel mult marginal: {s} · {w}', {s: span(m), w: wind(m)}) + tail};
   if (sts.every(x => x === 'na' || x === 'night')) return {sts, st:'na', text: t('Fără date')};
-  if (c) return {sts, st:'calm', text: t('Nicio fereastră bună · calm (sub {c} m/s) {s}', {c: s.calm, s: span(c)}) + tail};
+  if (c) return {sts, st:'calm', text: t('Nicio fereastră bună · calm (sub {c} {u}) {s}', {c: lim(s.calm, s), u: UNITS[unitOf(s)].n, s: span(c)}) + tail};
   return {sts, st:'no', text: t('Nicio fereastră bună') + tail};
 }
 
@@ -740,18 +769,91 @@ function parseCoords(str){
 }
 
 /* ---------- jurnal ----------
-   Unirea a două jurnale (local + Drive): pe fiecare id câștigă modificarea mai nouă, ștergerile mai noi șterg,
+   Legătura cu SkyReplay (aceeași ca Flight.kt din Android): sr = id-urile zborurilor SkyReplay legate de zi (20 de cifre hex,
+   SHA-256 al fișierului), srMin = minutele aduse de ele, srSrc = de unde vine timpul zilei: 'track' (traseul) sau 'manual'
+   (notat de utilizator). Câmpurile lipsesc la zilele fără legături. */
+const SR_ID = /^[0-9a-f]{8,64}$/, SR_SRC = ['manual', 'track'];
+const srOf = f => f.sr?.length ? {sr: [...f.sr], srMin: f.srMin || 0, ...(f.srSrc ? {srSrc: f.srSrc} : {})} : {};
+/* Ziua și-a luat timpul din traseu (pentru zilele de dinainte de srSrc: minutes == srMin). Ca SkyLink.fromTrack(). */
+const fromTrack = f => !!f.sr?.length && (f.srSrc === 'track' || (!f.srSrc && f.minutes === f.srMin));
+/* Leagă un traseu SkyReplay (id, minutele lui) de o zi existentă. Timpul notat rămâne („timpul meu”, ca alegerea implicită
+   din Android), deci ziua devine 'manual'; un traseu deja legat nu se adaugă de două ori. */
+function linkTrack(f, id, minutes){
+  if (f.sr?.includes(id)) return f;
+  return {...f, sr: [...(f.sr || []), id], srMin: (f.srMin || 0) + minutes, srSrc: 'manual'};
+}
+/* ---------- trasee (reluarea 3D) ----------
+   Ce trasee (fișiere FIT/IGC/GPX păstrate în browser) ține fiecare zi din jurnal. Aceleași reguli ca PwLogbook.link() din
+   SkyReplay: 1) id-urile din sr care există; 2) traseele din aceeași zi (data locală) de la aceeași locație cu minutele
+   apropiate (±10 % sau 1 min): toate, altfel cel mai apropiat; 3) o zi încă fără traseu ia traseele rămase de la data și locația
+   ei. Un traseu ține de cel mult o zi. track = {id, date, minutes, startMs, lat, lon, site}; coords(nume) = {lat, lon} sau null. */
+const TRACK_SITE_KM = 2, MY_SITE_KM = 1.5;
+const foldName = s => String(s ?? '').normalize('NFD').replace(/\p{M}+/gu, '').toLowerCase().trim();
+const minutesMatch = (logged, track) => Math.abs(logged - track) <= Math.max(1, logged * 0.1);
+function sameTrackSite(site, tr, coords){
+  const c = coords(site);
+  if (c && tr.lat != null && distKm(c.lat, c.lon, tr.lat, tr.lon) <= TRACK_SITE_KM) return true;
+  return !!tr.site && foldName(tr.site) === foldName(site);
+}
+function linkTracks(days, tracks, coords){
+  const out = new Map(days.map(d => [d.id, []])), claimed = new Set(), byId = new Map(tracks.map(x => [x.id, x]));
+  for (const d of days){
+    const l = (d.sr || []).map(id => byId.get(id)).filter(x => x && !claimed.has(x.id));
+    for (const x of l) claimed.add(x.id);
+    out.set(d.id, l);
+  }
+  const order = [...days].sort((a, b) => a.date.localeCompare(b.date) || a.id.localeCompare(b.id));
+  const cand = d => tracks.filter(x => x.date === d.date && !claimed.has(x.id) && sameTrackSite(d.site, x, coords)).sort((a, b) => a.startMs - b.startMs);
+  for (const strict of [true, false]) for (const d of order){
+    if (out.get(d.id).length) continue;
+    const c = cand(d); if (!c.length) continue;
+    let pick = c;
+    if (strict && !minutesMatch(d.minutes, c.reduce((a, x) => a + x.minutes, 0))){
+      const one = c.filter(x => minutesMatch(d.minutes, x.minutes)).sort((a, b) => Math.abs(a.minutes - d.minutes) - Math.abs(b.minutes - d.minutes))[0];
+      pick = one ? [one] : [];
+    }
+    for (const x of pick) claimed.add(x.id);
+    out.set(d.id, pick);
+  }
+  return out;
+}
+/* Ziua din jurnal în care intră un traseu: aceeași dată și locație (ca linkTracks), altfel null. */
+function dayForTrack(days, tr, coords){
+  return days.find(d => d.sr?.includes(tr.id)) || days.find(d => d.date === tr.date && sameTrackSite(d.site, tr, coords)) || null;
+}
+
+/* Importul Excel: adaugă doar zilele care lipsesc (aceeași dată, locație și durată = deja există). O zi existentă fără
+   legături primește legăturile SkyReplay din fișier. Ca mergeFlights() din Xlsx.kt. Întoarce [lista nouă, zile adăugate]. */
+function mergeImportFlights(existing, imported, newId, now){
+  const k = f => `${f.date}|${f.site}|${f.minutes}`, have = new Map(), out = [...existing];
+  for (const f of existing) have.set(k(f), (have.get(k(f)) || 0) + 1);
+  let n = 0;
+  for (const f of imported){
+    const c = have.get(k(f)) || 0;
+    if (c > 0){
+      have.set(k(f), c - 1);
+      if (f.sr?.length){ const i = out.findIndex(x => k(x) === k(f) && !x.sr?.length); if (i >= 0) out[i] = {...out[i], ...srOf(f), u: now}; }
+    } else { out.push({id: newId(), date: f.date, site: f.site, minutes: f.minutes, ...srOf(f), u: now}); n++; }
+  }
+  return [out, n];
+}
+
+/* Unirea a două jurnale (local + Drive): pe fiecare id câștigă modificarea mai nouă, ștergerile mai noi șterg,
    iar aceeași zi notată separat pe două dispozitive (alt id, aceeași dată + locație + durată) rămâne o singură dată. */
 function syncMerge(a, b){
   const tb = {...(b.tomb || {})};
   for (const [id, u] of Object.entries(a.tomb || {})) if (!(tb[id] >= u)) tb[id] = u;
   const fa = a.flights || [], fb = b.flights || [], ida = new Set(fa.map(f => f.id)), idb = new Set(fb.map(f => f.id));
   const k = f => `${f.date}|${f.site}|${f.minutes}`, cnt = new Map();
-  for (const f of fb) if (!ida.has(f.id)) cnt.set(k(f), (cnt.get(k(f)) || 0) + 1);
-  const drop = new Set();
-  for (const f of fa) if (!idb.has(f.id)){ const c = cnt.get(k(f)) || 0; if (c > 0){ cnt.set(k(f), c - 1); drop.add(f.id); } }
+  for (const f of fb) if (!ida.has(f.id)){ if (!cnt.has(k(f))) cnt.set(k(f), []); cnt.get(k(f)).push(f.id); }
+  const drop = new Set(), gift = new Map();   // gift: legăturile SkyReplay ale dublurii șterse trec pe ziua păstrată
+  for (const f of fa) if (!idb.has(f.id)){
+    const ids = cnt.get(k(f));
+    if (ids?.length){ const keep = ids.shift(); drop.add(f.id); if (f.sr?.length) gift.set(keep, f); }
+  }
   const by = new Map();
   for (const f of [...fb, ...fa]){ if (drop.has(f.id)) continue; const cur = by.get(f.id); if (!cur || (f.u || 0) > (cur.u || 0)) by.set(f.id, f); }
+  for (const [id, g] of gift){ const f = by.get(id); if (f && !f.sr?.length) by.set(id, {...f, ...srOf(g), u: Math.max(f.u || 0, g.u || 0) + 1}); }
   for (const [id, u] of Object.entries(tb)){ const f = by.get(id); if (f && (f.u || 0) <= u) by.delete(id); }
   return {flights: [...by.values()], tomb: tb};
 }
@@ -865,9 +967,15 @@ function xlsxParts(list, siteList, sync){
   const s4 = sync && [[{v: 'id'}, {v: 'data'}, {v: 'locatie'}, {v: 'minute'}, {v: 'modificat'}, {v: 'tip'}],
     ...[...sync.flights].sort((a, b) => a.id.localeCompare(b.id)).map(f => [{v: f.id}, {v: f.date}, {v: f.site}, {v: f.minutes}, {v: f.u || 0}, {v: 'zi'}]),
     ...Object.entries(sync.tomb || {}).sort().map(([id, u]) => [{v: id}, {v: ''}, {v: ''}, {v: ''}, {v: u}, {v: 'sters'}])];
-  const ov4 = s4 ? `<Override PartName="/xl/worksheets/sheet4.xml" ContentType="${WS}"/>` : '';
-  const sh4 = s4 ? `<sheet name="_sync" sheetId="4" state="hidden" r:id="rId5"/>` : '';
-  const rel4 = s4 ? `<Relationship Id="rId5" Type="${NS}/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet4.xml"/>` : '';
+  // Foaia ascunsă „_skyreplay”: legăturile cu zborurile SkyReplay, exact ca Xlsx.kt din Android. Doar dacă există zile legate,
+  // ca exportul fără legături să rămână octet cu octet cel vechi. Se potrivește la import după dată + locație + minute.
+  const linked = days.filter(f => f.sr?.length);
+  const s5 = linked.length ? [[{v: 'data'}, {v: 'locatie'}, {v: 'minute'}, {v: 'skyreplay'}, {v: 'minute_traseu'}, {v: 'sursa'}],
+    ...linked.map(f => [{v: f.date}, {v: f.site}, {v: f.minutes}, {v: f.sr.join(',')}, {v: f.srMin || 0}, {v: f.srSrc || ''}])] : null;
+  const ov4 = (s4 ? `<Override PartName="/xl/worksheets/sheet4.xml" ContentType="${WS}"/>` : '') + (s5 ? `<Override PartName="/xl/worksheets/sheet5.xml" ContentType="${WS}"/>` : '');
+  const sh4 = (s4 ? `<sheet name="_sync" sheetId="4" state="hidden" r:id="rId5"/>` : '') + (s5 ? `<sheet name="_skyreplay" sheetId="5" state="hidden" r:id="rId6"/>` : '');
+  const rel4 = (s4 ? `<Relationship Id="rId5" Type="${NS}/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet4.xml"/>` : '')
+    + (s5 ? `<Relationship Id="rId6" Type="${NS}/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet5.xml"/>` : '');
   return [
     ['[Content_Types].xml', X + `<Types xmlns="${NS}/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="${WS}"/><Override PartName="/xl/worksheets/sheet2.xml" ContentType="${WS}"/><Override PartName="/xl/worksheets/sheet3.xml" ContentType="${WS}"/>${ov4}<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>`],
     ['_rels/.rels', X + `<Relationships xmlns="${NS}/package/2006/relationships"><Relationship Id="rId1" Type="${NS}/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>`],
@@ -878,6 +986,7 @@ function xlsxParts(list, siteList, sync){
     ['xl/worksheets/sheet2.xml', xlSheet([26, 13, 12, 12], s2)],
     ['xl/worksheets/sheet3.xml', xlSheet([24, 11, 11, 11, 18, 18, 9], s3)],
     ...(s4 ? [['xl/worksheets/sheet4.xml', xlSheet([16, 12, 24, 9, 16, 7], s4)]] : []),
+    ...(s5 ? [['xl/worksheets/sheet5.xml', xlSheet([12, 24, 9, 46, 14, 9], s5)]] : []),
   ];
 }
 const CRC_T = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++){ let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
@@ -976,6 +1085,7 @@ function readXlsx(files){
     const date = parseExcelDate(r[0]), site = String(r[1] ?? '').trim(), min = parseExcelMinutes(r[3], r[2]);
     if (date && site && min > 0) fl.push({date, site, minutes: min});
   }
+  attachSkyReplay(fl, sheet('_skyreplay'), shared);
   const st = [], s3 = sheet('Situri') || sheet('Sites');
   if (s3) for (const r of xlCells(s3, shared)){
     const name = String(r[0] ?? '').trim(), lat = num(r[1]), lon = num(r[2]);
@@ -985,6 +1095,24 @@ function readXlsx(files){
     st.push({n: name, lat, lon, alt: alt != null ? Math.round(alt) : null, o: [0,1,2,3,4,5,6,7].map(i => good.has(i) ? 2 : marg.has(i) ? 1 : 0), ...(hf >= 0 ? {hf} : {})});
   }
   return {flights: fl, sites: st};
+}
+/* Pune legăturile SkyReplay din foaia „_skyreplay” pe zilele cu aceeași dată + locație + minute (pe rând, la dubluri).
+   Rândurile greșite sunt ignorate. Ca attachSkyReplay() din Xlsx.kt. Modifică zilele primite. */
+function attachSkyReplay(days, xml, shared){
+  if (!xml) return days;
+  const links = new Map();
+  for (const r of xlCells(xml, shared)){
+    const date = parseExcelDate(r[0]), site = String(r[1] ?? '').trim(), mn = num(r[2]);
+    if (!date || !site || mn == null) continue;
+    const ids = [...new Set(String(r[3] ?? '').split(',').map(x => x.trim()).filter(x => SR_ID.test(x)))].slice(0, 50);
+    if (!ids.length) continue;
+    const m = num(r[4]), srMin = m != null && Math.round(m) >= 0 && Math.round(m) <= 1440 ? Math.round(m) : 0;
+    const src = String(r[5] ?? '').trim(), k = `${date}|${site}|${Math.round(mn)}`;
+    if (!links.has(k)) links.set(k, []);
+    links.get(k).push({sr: ids, srMin, ...(SR_SRC.includes(src) ? {srSrc: src} : {})});
+  }
+  for (const f of days){ const l = links.get(`${f.date}|${f.site}|${f.minutes}`)?.shift(); if (l) Object.assign(f, l); }
+  return days;
 }
 /* Starea de sincronizare din foaia ascunsă „_sync” a backup-ului din Drive: {flights, tomb}, sau null dacă foaia lipsește. */
 function readSync(files){
@@ -996,6 +1124,8 @@ function readSync(files){
     const date = String(r[1] ?? '').trim(), site = String(r[2] ?? '').trim(), minutes = Math.round(num(r[3]) || 0);
     if (/^\d{4}-\d{2}-\d{2}$/.test(date) && site && minutes > 0) flights.push({id, date, site, minutes, u});
   }
+  // Legăturile SkyReplay vin din „_skyreplay” (aceeași foaie ca în export; „_sync” rămâne cum o scriu versiunile vechi).
+  attachSkyReplay([...flights].sort((a, b) => a.date.localeCompare(b.date) || a.id.localeCompare(b.id)), xlSheetXml(files, '_skyreplay'), xlShared(files));
   return {flights, tomb};
 }
 
@@ -1208,9 +1338,9 @@ function render(){
     for (const h of hs){
       const {w, r} = rateAt(s, d, h);
       if (r.st === 'na'){ html += `<td class="${past(h)}"><div class="cell na">–</div></td>`; continue; }
-      const rain = w.pr > settings.rain ? `<span class="rain">${w.pr.toFixed(1)}mm</span>` : `<small>${Math.round(w.wg)}</small>`;
-      html += `<td class="${past(h)}"><button class="cell ${r.st}" data-site="${si}" data-h="${h}" aria-label="${t('{n} ora {h}: {st}, {d} {v} metri pe secundă, {sky}', {n: esc(s.n), h, st: STATUS_TXT[r.st], d: DIRS[sectorOf(w.wd)], v: w.ws.toFixed(1), sky: sky(w).label})}${r.warn.length ? ', ' + t('cu avertizare') : ''}">`
-        + (r.warn.length ? '<span class="flag" aria-hidden="true"></span>' : '') + `<span class="ic">${skySvg(sky(w).icon)}<svg class="arr" viewBox="0 0 24 24" style="transform:rotate(${(w.wd+180)%360}deg)">${ARROW}</svg></span><b>${Math.round(w.ws)}</b>${rain}</button></td>`;
+      const rain = w.pr > settings.rain ? `<span class="rain">${w.pr.toFixed(1)}mm</span>` : `<small>${spd(w.wg, settings, 0)}</small>`;
+      html += `<td class="${past(h)}"><button class="cell ${r.st}" data-site="${si}" data-h="${h}" aria-label="${t('{n} ora {h}: {st}, {d} {v} {u}, {sky}', {n: esc(s.n), h, st: STATUS_TXT[r.st], d: DIRS[sectorOf(w.wd)], v: spd(w.ws, settings), u: t(UNIT_INFO[unitOf(settings)].say), sky: sky(w).label})}${r.warn.length ? ', ' + t('cu avertizare') : ''}">`
+        + (r.warn.length ? '<span class="flag" aria-hidden="true"></span>' : '') + `<span class="ic">${skySvg(sky(w).icon)}<svg class="arr" viewBox="0 0 24 24" style="transform:rotate(${(w.wd+180)%360}deg)">${ARROW}</svg></span><b>${spd(w.ws, settings, 0)}</b>${rain}</button></td>`;
     }
     html += '</tr>';
   }
@@ -1289,9 +1419,9 @@ function openCell(si, h){
     <div class="skyrow">${skySvg(k.icon)}<div><b>${esc(k.label)}</b>${k.type ? `<br><span style="color:var(--muted)">${esc(k.type)}</span>` : ''}</div></div>
     ${k.type && CLOUD_NOTES[k.type] ? `<p class="note">${t(CLOUD_NOTES[k.type])}</p>` : ''}
     <dl class="facts">
-      <dt>${t('Vânt la 10 m')}</dt><dd>${t('{v} m/s din {d}', {v: w.ws.toFixed(1), d: dir(w.wd)})}</dd>
-      <dt>${t('Rafale')}</dt><dd>${w.wg != null ? w.wg.toFixed(1) + ' m/s' : '–'}</dd>
-      <dt>${t('Vânt la ~1500 m')}</dt><dd>${w.w8 != null ? t('{v} m/s din {d}', {v: w.w8.toFixed(1), d: dir(w.d8)}) : '–'}</dd>
+      <dt>${t('Vânt la 10 m')}</dt><dd>${t('{v} {u} din {d}', {v: spd(w.ws, settings), u: unitName(), d: dir(w.wd)})}</dd>
+      <dt>${t('Rafale')}</dt><dd>${w.wg != null ? spd(w.wg, settings) + ' ' + unitName() : '–'}</dd>
+      <dt>${t('Vânt la ~1500 m')}</dt><dd>${w.w8 != null ? t('{v} {u} din {d}', {v: spd(w.w8, settings), u: unitName(), d: dir(w.d8)}) : '–'}</dd>
       <dt>${t('Nori')}</dt><dd>${w.cc != null ? w.cc + ' %' : '–'}${w.lo != null ? ` <span style="color:var(--muted);font-weight:500">${t('(jos {lo} · mediu {mi} · sus {hi})', {lo: w.lo, mi: w.mi, hi: w.hi})}</span>` : ''}</dd>
       <dt>${t('Ploaie')}</dt><dd>${w.pr != null ? w.pr.toFixed(1) + ' mm/h' : '–'}</dd>
       <dt>${t('Instabilitate')}</dt><dd>${w.cape != null ? 'CAPE ' + Math.round(w.cape) + ' J/kg' : '–'}${w.li != null ? ' · LI ' + String(Math.round(w.li * 10) / 10).replace('-', '−') : ''}</dd>
@@ -1349,7 +1479,7 @@ function holfuyBlock(s){
 document.addEventListener('toggle', e => {
   const d = e.target; if (!d.matches?.('details.hfbox') || !d.open) return;
   const box = d.querySelector('.holfuy');
-  if (!box.firstChild) box.innerHTML = `<iframe title="${t('Vântul acum la {n}', {n: d.dataset.hfn})}" src="https://widget.holfuy.com/?station=${d.dataset.hf}&su=m/s&t=C&lang=en&mode=detailed"></iframe>`;
+  if (!box.firstChild) box.innerHTML = `<iframe title="${t('Vântul acum la {n}', {n: d.dataset.hfn})}" src="https://widget.holfuy.com/?station=${d.dataset.hf}&su=${UNIT_INFO[unitOf(settings)].hf}&t=C&lang=en&mode=detailed"></iframe>`;
 }, true);
 function siteLinks(s){
   return `<div class="links">
@@ -1385,13 +1515,22 @@ function renderManualRose(){
     : `<button type="button" data-rose="${i}" data-v="${manualRose[i]}" aria-label="${DIRS[i]}: ${t(['nu','marginal','bun'][manualRose[i]])}">${DIRS[i]}</button>`).join('');
 }
 const SETTING_IDS = {good:'sGood', marg:'sMarg', calm:'sCalm', gust:'sGust', spread:'sSpread', rain:'sRain', from:'sFrom', to:'sTo'};
-function fillSettings(){ for (const [k, id] of Object.entries(SETTING_IDS)) $('#'+id).value = settings[k]; }
+const WIND_KEYS = ['good', 'marg', 'calm', 'gust', 'spread'];   // pragurile de vânt: afișate în unitatea aleasă, salvate în m/s
+function fillSettings(){
+  for (const [k, id] of Object.entries(SETTING_IDS)){
+    const wind = WIND_KEYS.includes(k);
+    $('#'+id).value = wind ? lim(settings[k], settings) : settings[k];
+    if (wind) $('#'+id).step = unitOf(settings) === 'ms' ? '0.5' : '1';
+  }
+  $('#customSum').textContent = t('Personalizat (pragurile de vânt în {u})', {u: unitName()});
+  for (const b of document.querySelectorAll('#unitSeg button')) b.setAttribute('aria-pressed', String(b.dataset.unit === unitOf(settings)));
+}
 /* ONB-02: profilurile de limite (PROFILES e în core.js). „Personalizat” = valori care nu se potrivesc cu niciun profil. */
 const PROF_NAME = {elev: 'Elev / începător', pilot: 'Pilot', avansat: 'Avansat'};
 const profOf = st => Object.keys(PROFILES).find(k => Object.entries(PROFILES[k]).every(([f, v]) => st[f] === v)) || 'custom';
 function profButtons(cur, attr){
   return Object.keys(PROFILES).map(k => { const x = PROFILES[k];
-    return `<button type="button" class="prof" ${attr}="${k}" aria-pressed="${cur === k}"><b>${t(PROF_NAME[k])}</b><span>${t('Vânt bun până la {g} m/s, marginal până la {m}, rafale până la {r}', {g: x.good, m: x.marg, r: x.gust})}</span></button>`; }).join('');
+    return `<button type="button" class="prof" ${attr}="${k}" aria-pressed="${cur === k}"><b>${t(PROF_NAME[k])}</b><span>${t('Vânt bun până la {g} {u}, marginal până la {m}, rafale până la {r}', {g: lim(x.good, settings), u: unitName(), m: lim(x.marg, settings), r: lim(x.gust, settings)})}</span></button>`; }).join('');
 }
 function renderProfiles(){
   const cur = profOf(settings);
@@ -1418,7 +1557,7 @@ const monthName = k => cap(new Date(k + '-15T12:00').toLocaleDateString(LOC, {mo
 const total = list => list.reduce((a, f) => a + f.minutes, 0);
 const zile = n => n === 1 ? t('1 zi') : t('{n} zile', {n});
 
-function openLog(){ logSite = null; logYear = null; renderLog(); $('#dlgLog').showModal(); syncOnOpen(); }
+function openLog(){ logSite = null; logYear = null; renderLog(); if (!$('#dlgLog').open) $('#dlgLog').showModal(); syncOnOpen(); refreshTracks(); }
 function renderLog(){
   if (!flights.length){
     $('#logBody').innerHTML = `<p class="onb-lead" style="margin:4px 0 6px">${t('Încă nu ai nimic notat.')}</p>
@@ -1432,7 +1571,7 @@ function renderLog(){
   const places = new Set(scope.map(f => f.site)).size;
   let html = syncPanel() + (logYear ? `<h3 style="margin-top:0">${t('Anul {y}', {y: logYear})}</h3>` : '') + `<div class="stats"><div><b>${fmtDur(total(scope))}</b><span>${t('în aer')}</span></div><div><b>${scope.length}</b><span>${t(scope.length === 1 ? 'zi de zbor' : 'zile de zbor')}</span></div><div><b>${places}</b><span>${t(places === 1 ? 'locație' : 'locații')}</span></div></div>
     ${logYear ? '' : `<p class="hint" style="margin:8px 0 0">${t('În {y}: {d} în {z}.', {y: year, d: fmtDur(total(inYear)), z: zile(inYear.length)})}</p>`}
-    <div class="actions"><button class="btn primary" id="addFlight" type="button">${t('+ Adaugă zi de zbor')}</button>${flights.length ? '<button class="btn" id="exportXlsx" type="button">Export Excel</button>' : ''}<button class="btn" id="importXlsx" type="button">Import Excel</button></div>
+    <div class="actions"><button class="btn primary" id="addFlight" type="button">${t('+ Adaugă zi de zbor')}</button>${flights.length ? '<button class="btn" id="exportXlsx" type="button">Export Excel</button>' : ''}<button class="btn" id="importXlsx" type="button">Import Excel</button><button class="btn" id="openTrack" type="button">${t('Deschide un traseu')}</button></div>
     <p class="hint" style="margin:6px 0 0">${t('Exportul e și backup: păstrează fișierul și încarcă-l cu „Import Excel” după ce schimbi telefonul. Se adaugă doar ce lipsește.')}</p>
     <div class="seg" role="tablist"><button role="tab" type="button" aria-selected="${logView === 'days'}" data-view="days">${t('Pe zile')}</button><button role="tab" type="button" aria-selected="${logView === 'sites'}" data-view="sites">${t('Pe locații')}</button><button role="tab" type="button" aria-selected="${logView === 'years'}" data-view="years">${t('Pe ani')}</button></div>`;
   // Filtrele active (an, locație), fiecare cu ✕.
@@ -1447,7 +1586,7 @@ function renderLog(){
     for (const f of list){ const k = f.date.slice(0, 7); if (!months.has(k)) months.set(k, []); months.get(k).push(f); }
     for (const [k, fs] of months){
       html += `<h3>${monthName(k)} <small>${t('· {d} în {z}', {d: fmtDur(total(fs)), z: zile(fs.length)})}</small></h3><div class="list">`
-        + fs.map(f => `<button class="row" type="button" data-fl="${f.id}"><div class="t"><b>${esc(f.site)}</b><span>${fmtDay(f.date)}</span></div><span class="dur">${fmtDur(f.minutes)}</span></button>`).join('')
+        + fs.map(f => `<div class="lday" data-day="${f.id}"><button class="row" type="button" data-fl="${f.id}"><div class="t"><b>${esc(f.site)}</b><span>${fmtDay(f.date)}${srcNote(f)}</span></div><span class="dur">${fmtDur(f.minutes)}</span></button>${trackLine(f)}</div>`).join('')
         + '</div>';
     }
   } else if (logView === 'years'){
@@ -1515,7 +1654,12 @@ $('#flForm').addEventListener('submit', e => {
   const date = $('#flDate').value, h = parseInt($('#flH').value, 10) || 0, m = parseInt($('#flM').value, 10) || 0, minutes = h * 60 + m;
   const err = $('#flErr'), msg = validateFlight(site, date, h, m, localDate(new Date()));
   if (msg){ err.textContent = msg; err.hidden = false; return; }
-  if (editingId){ const f = flights.find(x => x.id === editingId); Object.assign(f, {site, date, minutes, u: Date.now()}); }
+  if (editingId){
+    const f = flights.find(x => x.id === editingId);
+    // Timpul schimbat de mână la o zi legată de SkyReplay devine „notat de tine” (ca în Android).
+    if (f.sr?.length && minutes !== f.minutes) f.srSrc = 'manual';
+    Object.assign(f, {site, date, minutes, u: Date.now()});
+  }
   else flights.push({id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), date, site, minutes, u: Date.now()});
   markDirty();
   saveFlights(); $('#dlgFlight').close();
@@ -1526,14 +1670,10 @@ $('#flForm').addEventListener('submit', e => {
 /* Exportul și importul Excel (xlsxParts, zipBlob, unzip, readXlsx, readSync) sunt în core.js. */
 /* Adaugă doar ce lipsește: aceeași dată + locație + durată = zi existentă; aceleași coordonate = sit existent. */
 function mergeImport(data){
-  const k = f => `${f.date}|${f.site}|${f.minutes}`, have = new Map();
-  for (const f of flights) have.set(k(f), (have.get(k(f)) || 0) + 1);
-  let nf = 0;
-  for (const f of data.flights){
-    const c = have.get(k(f)) || 0;
-    if (c > 0) have.set(k(f), c - 1);
-    else { flights.push({id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8), ...f, u: Date.now()}); nf++; }
-  }
+  // Zilele: mergeImportFlights() din core.js (o zi existentă primește și legăturile SkyReplay din fișier).
+  const [all, nf] = mergeImportFlights(flights, data.flights, () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8), Date.now());
+  const linked = all.some((f, i) => f !== flights[i] && i < flights.length);
+  flights = all; if (linked) markDirty();
   const keys = new Set(sites.map(key)); let ns = 0;
   for (const s of data.sites) if (!keys.has(key(s))){ keys.add(key(s)); sites.push(s); ns++; }
   return [nf, ns];
@@ -1560,6 +1700,132 @@ function exportXlsx(){
   document.body.append(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 5000);
   toast(t('Fișierul Excel a fost descărcat'));
+}
+
+/* ---------- trasee și reluarea 3D ----------
+   Fișierele de zbor (FIT/IGC/GPX, .zip din Garmin Connect, .fit.gz) stau în acest browser (IndexedDB), cu id-ul SkyReplay.
+   Codul lor e în replay/tracks.js (modul ES, încărcat doar când e nevoie); reluarea e pagina replay.html#flight=<id>.
+   Ce traseu ține de ce zi: linkTracks() din core.js (aceleași reguli ca aplicația SkyReplay). Legătura explicită (sr) se scrie
+   doar când utilizatorul adaugă un traseu la o zi; potrivirea după dată + locație se calculează la afișare. */
+let trackMetas = null, trackTarget = null, TRACKS = null;
+const tracksMod = () => TRACKS ??= import('./replay/tracks.js').catch(e => { TRACKS = null; throw e; });
+const replayUrl = id => `replay.html#flight=${id}`;
+const coordsOf = name => { const f = foldName(name), s = sites.find(x => x.n === name) || sites.find(x => foldName(x.n) === f); return s ? {lat: s.lat, lon: s.lon} : null; };
+async function refreshTracks(){
+  try { trackMetas = await (await tracksMod()).listTracks(); } catch { trackMetas = []; }
+  if ($('#dlgLog').open) renderLog();
+}
+const tracksOf = () => trackMetas ? linkTracks(flights, trackMetas, coordsOf) : new Map();
+let trackCache = null;
+function trackLine(f){
+  if (!trackCache || trackCache.flights !== flights || trackCache.metas !== trackMetas) trackCache = {flights, metas: trackMetas, map: tracksOf()};
+  const l = trackCache.map.get(f.id) || [];
+  return `<div class="trk">${l.length ? `<button type="button" data-replay="${f.id}">${t('▶ Reluare 3D')}${l.length > 1 ? ` (${l.length})` : ''}</button><button type="button" class="sec" data-addtrk="${f.id}">${t('+ traseu')}</button>`
+    : `<button type="button" data-addtrk="${f.id}">${t('Adaugă traseu…')}</button>`}</div>`;
+}
+/* De unde vine timpul unei zile legate (ca în Android). */
+const srcNote = f => !f.sr?.length ? '' : (f.srSrc === 'manual' || (!f.srSrc && f.minutes !== f.srMin)) ? t(' · timp notat de tine') : t(' · timp din traseu');
+const TRACK_ERR = {'not-flight': 'Fișierul nu pare un zbor (FIT, IGC sau GPX).', 'no-gps': 'Fișierul nu are puncte GPS.', 'too-large': 'Fișierul e prea mare.',
+  'bad-zip': 'Arhiva .zip e stricată.', 'zip-empty': 'Arhiva nu conține un fișier .fit, .igc sau .gpx.', read: 'Nu am putut citi zborul din fișier.'};
+const fmtTime = ms => new Date(ms).toLocaleTimeString(LOC, {hour: '2-digit', minute: '2-digit', hour12: false});
+function pickTrack(dayId){ trackTarget = dayId; $('#trackFile').value = ''; $('#trackFile').click(); }
+/* Numele locației pentru un traseu nou: situl tău cel mai apropiat (≤ 1,5 km), altfel decolarea ParaglidingEarth (≤ 1 km). Ca SkyLink.resolveSite. */
+async function nameTrackSite(m){
+  if (m.site) return m.site;
+  const mine = sites.map(s => ({s, km: distKm(m.lat, m.lon, s.lat, s.lon)})).filter(x => x.km <= MY_SITE_KM).sort((a, b) => a.km - b.km)[0];
+  let name = mine?.s.n || null;
+  if (!name) try { name = (await loadNear(m.lat, m.lon, 1))[0]?.s.n || null; } catch {}
+  if (name){ m.site = name; try { await (await tracksMod()).setTrackSite(m.id, name); } catch {} }
+  return name;
+}
+async function addTrack(file, dayId){
+  let r;
+  try { r = await (await tracksMod()).addTrackFile(file); }
+  catch (e) { return toast(t(TRACK_ERR[e.message] || 'Nu am putut deschide fișierul.')); }
+  const m = r.meta;
+  await nameTrackSite(m);
+  await refreshTracks();
+  const day = dayId && flights.find(f => f.id === dayId);
+  if (!day) return offerJournal(m);
+  if (m.date !== day.date) return trackDialog(t('Altă zi'), `<p>${t('Traseul e din {d}, iar ziua aleasă e {z}.', {d: esc(fmtDay(m.date)), z: esc(fmtDay(day.date))})}</p>
+    <div class="actions"><button class="btn primary" type="button" data-trlink="${day.id}" data-trid="${m.id}" data-trmin="${m.minutes}">${t('Leagă totuși de ziua aleasă')}</button><a class="btn" href="${replayUrl(m.id)}">${t('Doar reluarea')}</a></div>`);
+  linkDay(day.id, m.id, m.minutes);
+}
+function linkDay(dayId, id, minutes){
+  const i = flights.findIndex(f => f.id === dayId); if (i < 0) return;
+  const f = linkTrack(flights[i], id, minutes);
+  if (f !== flights[i]){ flights[i] = {...f, u: Date.now()}; saveFlights(); markDirty(); }
+  location.href = replayUrl(id);
+}
+function trackDialog(title, html){ $('#trTitle').textContent = title; $('#trBody').innerHTML = html; if (!$('#dlgTrack').open) $('#dlgTrack').showModal(); }
+/* Un traseu care nu e încă în jurnal: îl legăm de ziua lui (aceeași dată și locație) sau propunem o zi nouă din traseu. */
+async function offerJournal(m){
+  const lead = `<p class="onb-lead" style="margin:0 0 4px">${esc(fmtDay(m.date))} · ${fmtTime(m.startMs)} · ${fmtDur(m.minutes)}${m.distKm ? ` · ${m.distKm} km` : ''}</p>`;
+  if (flights.some(f => f.sr?.includes(m.id))) { location.href = replayUrl(m.id); return; }
+  const day = dayForTrack(flights, m, coordsOf);
+  if (day) return trackDialog(t('Adaugi în jurnal?'), lead + `<p>${t('În jurnal există deja ziua aceasta: {s}, {d}. Leg traseul de ea? Timpul notat rămâne.', {s: esc(day.site), d: fmtDur(day.minutes)})}</p>
+    <div class="actions"><button class="btn primary" type="button" data-trlink="${day.id}" data-trid="${m.id}" data-trmin="${m.minutes}">${t('Leagă de ziua din jurnal')}</button><a class="btn" href="${replayUrl(m.id)}">${t('Doar reluarea')}</a></div>`);
+  const names = [...new Set([...(m.site ? [m.site] : []), ...sites.map(s => s.n), ...flights.map(x => x.site)])];
+  trackDialog(t('Adaugi în jurnal?'), lead + `<p class="hint" style="margin:0">${t('Zborul nu e încă în jurnal. Verifică ziua, locația și timpul în aer.')}</p>
+    <form id="trForm" novalidate data-trid="${m.id}" data-trmin="${m.minutes}">
+      <label class="f" for="trSite">${t('Locație')}</label>
+      <select class="in" id="trSite">${names.map(n => `<option>${esc(n)}</option>`).join('')}<option value="__other"${names.length ? '' : ' selected'}>${t('Altă locație…')}</option></select>
+      <input class="in" id="trSiteOther" placeholder="${t('Numele locației')}" autocomplete="off"${names.length ? ' hidden' : ''} style="margin-top:8px">
+      <label class="f" for="trDate">${t('Data')}</label>
+      <input class="in" id="trDate" type="date" value="${m.date}" max="${localDate(new Date())}">
+      <label class="f">${t('Timp în aer în ziua respectivă')}</label>
+      <div class="two"><div><input class="in" id="trH" type="number" min="0" inputmode="numeric" value="${Math.floor(m.minutes / 60)}" aria-label="${t('Ore')}"><p class="hint">${t('ore')}</p></div>
+        <div><input class="in" id="trM" type="number" min="0" inputmode="numeric" value="${m.minutes % 60}" aria-label="${t('Minute')}"><p class="hint">${t('minute')}</p></div></div>
+      <p class="hint">${t('Din traseu: {d}.', {d: fmtDur(m.minutes)})}</p>
+      <p class="err" id="trErr" hidden></p>
+      <div class="actions"><button class="btn primary" type="submit">${t('Adaugă în jurnal')}</button><a class="btn" href="${replayUrl(m.id)}">${t('Doar reluarea')}</a></div>
+    </form>`);
+}
+document.addEventListener('change', e => { if (e.target.id === 'trSite'){ $('#trSiteOther').hidden = e.target.value !== '__other'; if (!$('#trSiteOther').hidden) $('#trSiteOther').focus(); } });
+document.addEventListener('submit', e => {
+  if (e.target.id !== 'trForm') return;
+  e.preventDefault();
+  const fm = e.target, id = fm.dataset.trid, trMin = +fm.dataset.trmin;
+  const site = ($('#trSite').value === '__other' ? $('#trSiteOther').value : $('#trSite').value).trim();
+  const date = $('#trDate').value, h = parseInt($('#trH').value, 10) || 0, mm = parseInt($('#trM').value, 10) || 0, minutes = h * 60 + mm;
+  const msg = validateFlight(site, date, h, mm, localDate(new Date()));
+  if (msg){ $('#trErr').textContent = msg; $('#trErr').hidden = false; return; }
+  flights.push({id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), date, site, minutes, sr: [id], srMin: trMin, srSrc: minutes === trMin ? 'track' : 'manual', u: Date.now()});
+  saveFlights(); markDirty();
+  location.href = replayUrl(id);
+});
+/* Mai multe trasee într-o zi: alegi unul. */
+function showDayTracks(dayId){
+  const f = flights.find(x => x.id === dayId), l = tracksOf().get(dayId) || [];
+  if (l.length === 1){ location.href = replayUrl(l[0].id); return; }
+  trackDialog(t('Reluare 3D'), `<p class="hint" style="margin:0">${esc(f.site)} · ${fmtDay(f.date)}</p><div class="tlist">`
+    + l.map(m => `<a class="btn" href="${replayUrl(m.id)}"><span>▶ ${m.date !== f.date ? esc(fmtDay(m.date)) + ' · ' : ''}${fmtTime(m.startMs)}</span><span>${fmtDur(m.minutes)}${m.distKm ? ` · ${m.distKm} km` : ''}</span></a>`).join('')
+    + `</div><div class="actions"><button class="btn" type="button" data-addtrk="${dayId}">${t('Adaugă încă un traseu…')}</button></div>`);
+}
+$('#trackFile').addEventListener('change', e => { const f = e.target.files[0]; if (f) addTrack(f, trackTarget); });
+/* Tragi un fișier peste jurnal: peste o zi = traseul ei; în altă parte = un traseu de pus în jurnal. */
+{
+  const log = $('#dlgLog'), mark = el => { for (const x of log.querySelectorAll('.lday.drop')) if (x !== el) x.classList.remove('drop'); el?.classList.add('drop'); };
+  log.addEventListener('dragover', e => { if (![...e.dataTransfer.types].includes('Files')) return; e.preventDefault(); mark(e.target.closest('.lday')); });
+  log.addEventListener('dragleave', e => { if (!log.contains(e.relatedTarget)) mark(null); });
+  log.addEventListener('drop', e => {
+    const f = e.dataTransfer.files[0]; if (!f) return;
+    e.preventDefault(); const d = e.target.closest('.lday'); mark(null);
+    if (/\.xlsx$/i.test(f.name)) return importXlsx(f);
+    addTrack(f, d?.dataset.day || null);
+  });
+}
+/* Venit de pe pagina de reluare: #jurnal = deschide jurnalul; #addtrack=<id> = pune traseul în jurnal. */
+async function trackFromHash(){
+  const m = location.hash.match(/^#(jurnal|addtrack=([0-9a-f]{8,64}))$/); if (!m) return;
+  history.replaceState(null, '', location.pathname + location.search);
+  openLog();
+  if (!m[2]) return;
+  try {
+    const r = await (await tracksMod()).loadTrack(m[2]);
+    if (!r) return toast(t('Traseul nu mai e în acest browser.'));
+    await nameTrackSite(r.meta); offerJournal(r.meta);
+  } catch { toast(t('Nu am putut deschide fișierul.')); }
 }
 
 /* ---------- sincronizare în Google Drive-ul fiecăruia ----------
@@ -1730,6 +1996,10 @@ document.addEventListener('click', e => {
   if (btn.dataset.year){ logYear = btn.dataset.year; logView = 'days'; logSite = null; renderLog(); $('#logBody').scrollTop = 0; return; }
   if (btn.matches('[data-clear-year]')){ logYear = null; renderLog(); return; }
   if (btn.dataset.fl){ return openFlight(flights.find(f => f.id === btn.dataset.fl)); }
+  if (btn.dataset.replay) return showDayTracks(btn.dataset.replay);
+  if (btn.dataset.addtrk) return pickTrack(btn.dataset.addtrk);
+  if (btn.id === 'openTrack') return pickTrack(null);
+  if (btn.dataset.trlink){ $('#dlgTrack').close(); return linkDay(btn.dataset.trlink, btn.dataset.trid, +btn.dataset.trmin); }
   if (btn.dataset.flew != null){ const s = sites[+btn.dataset.flew]; $('#dlgCell').close(); openLog(); return openFlight({site: s.n}); }
   if (btn.id === 'flDelete'){
     if (btn.dataset.armed){ flights = flights.filter(f => f.id !== editingId); tomb[editingId] = Date.now(); store.set('vld.tomb', tomb); saveFlights(); markDirty(); $('#dlgFlight').close(); renderLog(); toast(t('Șters')); }
@@ -1776,6 +2046,7 @@ document.addEventListener('click', e => {
   }
   if (btn.id === 'findNear') return openOnb(1, 'near');
   if (btn.id === 'pickOpen') return openPick();
+  if (btn.dataset.unit){ settings = {...settings, unit: btn.dataset.unit}; store.set('vld.settings', settings); fillSettings(); renderProfiles(); render(); return toast(t('Vântul în {u}', {u: unitName()})); }
   if (btn.dataset.model){ settings = {...settings, model: btn.dataset.model}; store.set('vld.settings', settings); renderModels(); load(true); return toast(t('Modelul meteo: {m}', {m: t(MODELS[btn.dataset.model].n)})); }
   if (btn.dataset.prof){ settings = {...settings, ...PROFILES[btn.dataset.prof]}; store.set('vld.settings', settings); fillSettings(); renderProfiles(); $('#sErr').hidden = true; render(); return toast(t('Limite: {p}', {p: t(PROF_NAME[btn.dataset.prof])})); }
   if (pickClick(btn) || onbClick(btn) || dirClick(btn)) return;
@@ -2163,7 +2434,7 @@ for (const [k, id] of Object.entries(SETTING_IDS)){
   $('#'+id).addEventListener('change', e => {
     const v = parseFloat(e.target.value);
     if (!isFinite(v)) return fillSettings();
-    const next = {...settings, [k]: (k === 'from' || k === 'to') ? Math.min(23, Math.max(0, Math.round(v))) : v};
+    const next = {...settings, [k]: (k === 'from' || k === 'to') ? Math.min(23, Math.max(0, Math.round(v))) : WIND_KEYS.includes(k) ? v / UNITS[unitOf(settings)].f : v};
     if (next.from > next.to) [next.from, next.to] = [next.to, next.from];
     const msg = validateSettings(next), err = $('#sErr');
     err.hidden = !msg; err.textContent = msg || '';
@@ -2205,6 +2476,8 @@ fetch('holfuy.json').then(r => r.json()).then(d => { HOLFUY = d; render(); if ($
 if (GOOGLE_CLIENT_ID && gAcct && tokenValid()) syncNow();
 load().then(scrollToNow);
 if (store.get('vld.sites', null) === null) openOnb();
+else trackFromHash();
+addEventListener('hashchange', trackFromHash);
 </script>
 </body>
 </html>
